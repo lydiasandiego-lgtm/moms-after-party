@@ -1,10 +1,14 @@
-Mom's After Party website update
+Mom's After Party — Nardò patio photos restored
 
-Upload BOTH files to the root of your GitHub repository:
+Upload ALL of these files to the root of the GitHub repository:
 - index.html
-- mom-portrait.png
+- mom-portrait.jpg
+- nardo-patio-wide.jpg
+- nardo-patio-covered.jpg
+- nardo-patio-seating.jpg
 
-When GitHub asks whether to replace index.html, confirm the replacement and commit the changes.
+Replace index.html and mom-portrait.jpg if GitHub asks.
+Your existing notes/status/score on the live site remain in browser storage because the live URL is unchanged.
 
-Your live site:
+Live site:
 https://lydiasandiego-lgtm.github.io/moms-after-party/
