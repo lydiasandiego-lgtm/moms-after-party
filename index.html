@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mom's After Party</title>
+<style>
+:root{--bg:#f7f5f1;--card:#fff;--ink:#29333a;--muted:#6b7280;--deep:#30443c;--line:#ddd8cf}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(135deg,#30443c,#5d7469);color:white;padding:28px 20px}
+header .inner{max-width:1180px;margin:0 auto}
+h1{margin:0 0 6px;font-size:30px} header p{margin:0;opacity:.92}
+.wrap{max-width:1180px;margin:0 auto;padding:22px}
+.summary{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:-18px 0 20px}
+.tile{background:white;border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.tile b{display:block;font-size:22px} .tile span{color:var(--muted);font-size:12px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 18px;align-items:center}
+.filter{border:1px solid var(--line);background:white;border-radius:999px;padding:9px 14px;cursor:pointer}
+.filter.active{background:var(--deep);color:white}
+.search{margin-left:auto;min-width:240px;border:1px solid var(--line);background:white;border-radius:999px;padding:9px 14px}
+.grid{display:flex;flex-direction:column;gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 3px 12px rgba(0,0,0,.045)}
+.card-inner{display:grid;grid-template-columns:240px 1fr}
+.photo{background:linear-gradient(145deg,#e8ece8,#dfe5e1);display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;min-height:290px}
+.photo .icon{font-size:48px} .photo strong{display:block;margin-top:8px} .photo small{color:var(--muted)}
+.body{padding:20px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+h2{font-size:21px;margin:0 0 4px} .meta{color:var(--muted);font-size:14px;line-height:1.45}
+.badge{font-size:12px;font-weight:700;padding:6px 9px;border-radius:999px;background:#e7ece9;white-space:nowrap}
+.ratings{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.rating{border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center;background:#fcfbf8;text-decoration:none;color:inherit}
+.rating strong{display:block;font-size:18px} .rating span{font-size:12px;color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.btn{display:inline-block;text-decoration:none;background:#eef2ef;color:#24322d;border:1px solid #d2dad5;border-radius:9px;padding:9px 10px;font-weight:600;font-size:13px}
+.btn:hover{background:#dfe7e2}
+.details{font-size:14px;line-height:1.55;margin:10px 0}
+.details b{color:#33443d}
+.editbox{border-top:1px solid var(--line);margin-top:12px;padding-top:12px}
+.editbox label{display:block;font-size:12px;color:var(--muted);margin:7px 0 4px}
+.editbox input,.editbox select,.editbox textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px;background:white;font:inherit}
+.editbox textarea{min-height:72px;resize:vertical}
+.smallrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.notice{background:#fff8e8;border:1px solid #ead7a6;border-radius:12px;padding:11px 13px;margin-bottom:16px;font-size:13px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:26px}
+@media(max-width:850px){.card-inner{grid-template-columns:1fr}.photo{min-height:140px}.summary{grid-template-columns:repeat(2,1fr)}.search{margin-left:0;min-width:100%}}
+@media(max-width:560px){h1{font-size:24px}.ratings{grid-template-columns:1fr}.smallrow{grid-template-columns:1fr}}
+
+.card[data-status="Eliminated"]{opacity:.88;border-left:5px solid #9b4d4d}
+.card[data-status="Eliminated"] .badge{background:#f5dddd;color:#7a2e2e}
+
+</style>
+</head>
+<body>
+<header><div class="inner">
+<h1>Mom's After Party</h1>
+
+</div></header>
+
+<div class="wrap">
+<div class="summary">
+  <div class="tile"><b id="countAll">0</b><span>Restaurants</span></div>
+  <div class="tile"><b id="countWaiting">0</b><span>Waiting</span></div>
+  <div class="tile"><b id="countResearch">0</b><span>Research</span></div>
+  <div class="tile"><b id="countHold">0</b><span>On Hold</span></div>
+<div class="tile"><b id="countEliminated">0</b><span>Eliminated</span></div>
+</div>
+
+<div class="notice">Your edits to status, score and notes are saved in this browser on this device.</div>
+
+<div class="toolbar">
+<button class="filter active" data-filter="All">All</button>
+<button class="filter" data-filter="Waiting">Waiting</button>
+<button class="filter" data-filter="Research">Research</button>
+<button class="filter" data-filter="On Hold">On Hold</button>
+<button class="filter" data-filter="Eliminated">❌ Eliminated</button>
+<input id="search" class="search" placeholder="Search restaurant or cuisine">
+</div>
+
+<div id="grid" class="grid"></div>
+</div>
+
+<footer>Ratings are snapshots and can change. Use the live review buttons for the latest ratings.</footer>
+
+<script>
+const restaurants = [{"status": "Waiting", "name": "C&O Cucina", "cuisine": "Italian", "capacity": 25, "address": "3016 Washington Blvd, Marina Del Rey, CA 90292", "phone": "310-301-7278", "email": "", "website": "https://www.candorestaurants.com/", "menu": "https://www.candorestaurants.com/main-menu", "google_rating": "4.3", "google_reviews": "3,345", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "4.3", "ot_reviews": "136", "opentable": "https://www.opentable.com/r/c-and-o-cucina", "price": "$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "8/7 submitted online request", "notes": "Menu is limited for the event.", "maps": "https://www.google.com/maps/search/?api=1&query=C%26O+Cucina+3016+Washington+Blvd%2C+Marina+Del+Rey%2C+CA+90292", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=3016+Washington+Blvd%2C+Marina+Del+Rey%2C+CA+90292", "google_reviews_url": "https://www.google.com/search?q=C%26O+Cucina+3016+Washington+Blvd%2C+Marina+Del+Rey%2C+CA+90292+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=C%26O+Cucina&find_loc=3016+Washington+Blvd%2C+Marina+Del+Rey%2C+CA+90292", "phone_url": "tel:3103017278", "email_url": ""}, {"status": "Waiting", "name": "Bacari Culver City", "cuisine": "Mediterranean / Small Plates", "capacity": 25, "address": "3833 Main St, Culver City, CA 90232", "phone": "", "email": "", "website": "https://www.eatwithbacari.com/culver-city", "menu": "https://www.eatwithbacari.com/cc-events", "google_rating": "", "google_reviews": "", "yelp_rating": "4.4", "yelp_reviews": "59", "ot_rating": "4.8", "ot_reviews": "382", "opentable": "https://www.opentable.com/r/bacari-culver-city", "price": "$$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "8/7 submitted online request", "notes": "Wine looks good; may only have brunch at the time needed.", "maps": "https://www.google.com/maps/search/?api=1&query=Bacari+Culver+City+3833+Main+St%2C+Culver+City%2C+CA+90232", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=3833+Main+St%2C+Culver+City%2C+CA+90232", "google_reviews_url": "https://www.google.com/search?q=Bacari+Culver+City+3833+Main+St%2C+Culver+City%2C+CA+90232+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=Bacari+Culver+City&find_loc=3833+Main+St%2C+Culver+City%2C+CA+90232", "phone_url": "", "email_url": ""}, {"status": "Waiting", "name": "Nardò Culver City", "cuisine": "Italian", "description": "Nardò Culver City is a Southern Italian restaurant in the heart of downtown Culver City, known for its wood-fired Neapolitan pizzas, fresh house-made pastas, and relaxed yet polished atmosphere. Opened in 2024, it has quickly become a popular destination for casual lunches, celebrations, and date nights. Its heated covered front patio provides an inviting outdoor setting that could be an excellent fit for an intimate memorial luncheon of approximately 25 guests.", "capacity": 25, "address": "9725 Culver Blvd, Culver City, CA 90232", "phone": "310-425-8605", "email": "gm.cc@nardoitalian.com", "website": "https://www.nardoitalian.com/", "menu": "https://www.nardoitalian.com/", "google_rating": "4.5", "google_reviews": "232", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "4.5", "ot_reviews": "106", "opentable": "https://www.opentable.com/r/nardo-culver-city", "price": "$$$", "private_room": "Ask", "private_patio": "Heated patio", "parking": "", "inquiry": "8/7 emailed GM", "notes": "Awaiting response.", "maps": "https://www.google.com/maps/search/?api=1&query=Nard%C3%B2+Culver+City+9725+Culver+Blvd%2C+Culver+City%2C+CA+90232", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=9725+Culver+Blvd%2C+Culver+City%2C+CA+90232", "google_reviews_url": "https://www.google.com/search?q=Nard%C3%B2+Culver+City+9725+Culver+Blvd%2C+Culver+City%2C+CA+90232+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=Nard%C3%B2+Culver+City&find_loc=9725+Culver+Blvd%2C+Culver+City%2C+CA+90232", "phone_url": "tel:3104258605", "email_url": "mailto:gm.cc@nardoitalian.com"}, {"status": "On Hold", "name": "BOA Steakhouse Manhattan Beach", "cuisine": "Steakhouse", "capacity": 25, "address": "3110 N Sepulveda Blvd, Manhattan Beach, CA 90266", "phone": "310-683-4080", "email": "", "website": "https://boasteak.com/locations/manhattan-beach", "menu": "https://www.boasteak.com/manhattan-beach-menus/", "google_rating": "4.1", "google_reviews": "609", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "4.6", "ot_reviews": "497", "opentable": "https://www.opentable.com/restaurant/profile/1251658", "price": "$$$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "On hold", "notes": "Very nice, but expensive.", "maps": "https://www.google.com/maps/search/?api=1&query=BOA+Steakhouse+Manhattan+Beach+3110+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=3110+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266", "google_reviews_url": "https://www.google.com/search?q=BOA+Steakhouse+Manhattan+Beach+3110+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=BOA+Steakhouse+Manhattan+Beach&find_loc=3110+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266", "phone_url": "tel:3106834080", "email_url": ""}, {"status": "Waiting", "name": "Lido di Manhattan Ristorante", "cuisine": "Italian", "capacity": 25, "address": "1550 Rosecrans Ave, Manhattan Beach, CA 90266", "phone": "310-536-0730", "email": "", "website": "https://www.lidodimanhattan.com/", "menu": "https://www.lidodimanhattan.com/our-menus", "google_rating": "4.1", "google_reviews": "622", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "", "ot_reviews": "", "opentable": "", "price": "$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "8/8 submitted online request", "notes": "", "maps": "https://www.google.com/maps/search/?api=1&query=Lido+di+Manhattan+Ristorante+1550+Rosecrans+Ave%2C+Manhattan+Beach%2C+CA+90266", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=1550+Rosecrans+Ave%2C+Manhattan+Beach%2C+CA+90266", "google_reviews_url": "https://www.google.com/search?q=Lido+di+Manhattan+Ristorante+1550+Rosecrans+Ave%2C+Manhattan+Beach%2C+CA+90266+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=Lido+di+Manhattan+Ristorante&find_loc=1550+Rosecrans+Ave%2C+Manhattan+Beach%2C+CA+90266", "phone_url": "tel:3105360730", "email_url": ""}, {"status": "Waiting", "name": "Caló Kitchen + Tequila", "cuisine": "Mexican", "capacity": 25, "address": "2191 Rosecrans Ave, El Segundo, CA 90245", "phone": "", "email": "", "website": "https://www.calokitchen.com/", "menu": "https://www.calokitchen.com/", "google_rating": "", "google_reviews": "", "yelp_rating": "4.5", "yelp_reviews": "2,300", "ot_rating": "4.5", "ot_reviews": "1", "opentable": "https://www.opentable.com/r/calo-kitchen-el-segundo", "price": "$$", "private_room": "", "private_patio": "Patio", "parking": "Street / area parking", "inquiry": "8/8 submitted online request", "notes": "Outside patio does not seem like the intimate vibe wanted.", "maps": "https://www.google.com/maps/search/?api=1&query=Cal%C3%B3+Kitchen+%2B+Tequila+2191+Rosecrans+Ave%2C+El+Segundo%2C+CA+90245", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=2191+Rosecrans+Ave%2C+El+Segundo%2C+CA+90245", "google_reviews_url": "https://www.google.com/search?q=Cal%C3%B3+Kitchen+%2B+Tequila+2191+Rosecrans+Ave%2C+El+Segundo%2C+CA+90245+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=Cal%C3%B3+Kitchen+%2B+Tequila&find_loc=2191+Rosecrans+Ave%2C+El+Segundo%2C+CA+90245", "phone_url": "", "email_url": ""}, {"status": "Research", "name": "JOEY Manhattan Beach", "cuisine": "American / Global", "capacity": 25, "address": "3120 N Sepulveda Blvd, Manhattan Beach, CA 90266", "phone": "310-546-1163", "email": "", "website": "https://joeyrestaurants.com/location/joey-manhattan-beach", "menu": "https://joeyrestaurants.com/menu", "google_rating": "4.4", "google_reviews": "3,597", "yelp_rating": "4.4", "yelp_reviews": "2,700", "ot_rating": "4.6", "ot_reviews": "1,024", "opentable": "https://www.opentable.com/r/joey-manhattan-beach", "price": "$$$", "private_room": "Private event inquiry", "private_patio": "Large patio", "parking": "", "inquiry": "Not contacted", "notes": "Worth researching for a group of 25.", "maps": "https://www.google.com/maps/search/?api=1&query=JOEY+Manhattan+Beach+3120+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=3120+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266", "google_reviews_url": "https://www.google.com/search?q=JOEY+Manhattan+Beach+3120+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=JOEY+Manhattan+Beach&find_loc=3120+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266", "phone_url": "tel:3105461163", "email_url": ""}, {"status": "Research", "name": "Tin Roof Bistro", "cuisine": "American / Italian", "capacity": 25, "address": "3500 N Sepulveda Blvd, Manhattan Beach, CA 90266", "phone": "310-939-0900", "email": "", "website": "https://www.tinroofbistro.com/", "menu": "https://www.tinroofbistro.com/menu/", "google_rating": "", "google_reviews": "", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "4.7", "ot_reviews": "5,627", "opentable": "https://www.opentable.com/r/tin-roof-bistro-manhattan-beach", "price": "$$$", "private_room": "Private cellar; up to 64 seated", "private_patio": "Garden / porch", "parking": "", "inquiry": "Not contacted", "notes": "Strong event fit; private-event space can accommodate 25.", "maps": "https://www.google.com/maps/search/?api=1&query=Tin+Roof+Bistro+3500+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=3500+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266", "google_reviews_url": "https://www.google.com/search?q=Tin+Roof+Bistro+3500+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=Tin+Roof+Bistro&find_loc=3500+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266", "phone_url": "tel:3109390900", "email_url": ""}, {"status": "Eliminated", "name": "Laurel Grill", "cuisine": "American", "capacity": 25, "address": "9300 Culver Blvd Ste 210, Culver City, CA 90232", "phone": "310-744-1440", "email": "", "website": "https://laurelgrill.com/", "menu": "https://laurelgrill.com/", "google_rating": "", "google_reviews": "", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "", "ot_reviews": "", "opentable": "", "price": "$$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "", "notes": "Cannot accommodate large parties", "description": "", "maps": "https://www.google.com/maps/search/?api=1&query=Laurel+Grill+9300+Culver+Blvd+Ste+210%2C+Culver+City%2C+CA+90232", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=9300+Culver+Blvd+Ste+210%2C+Culver+City%2C+CA+90232", "google_reviews_url": "https://www.google.com/search?q=Laurel+Grill+9300+Culver+Blvd+Ste+210%2C+Culver+City%2C+CA+90232+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=Laurel+Grill&find_loc=9300+Culver+Blvd+Ste+210%2C+Culver+City%2C+CA+90232", "phone_url": "tel:3107441440", "email_url": ""}, {"status": "Eliminated", "name": "Whiskey Red’s", "cuisine": "American / Seafood", "capacity": 25, "address": "13813 Fiji Way, Marina Del Rey, CA 90292", "phone": "310-823-4522", "email": "", "website": "https://www.whiskeyreds.com/", "menu": "https://www.whiskeyreds.com/", "google_rating": "", "google_reviews": "", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "", "ot_reviews": "", "opentable": "https://www.opentable.com/r/whiskey-reds-marina-del-rey", "price": "$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "", "notes": "Nice view of harbor but looks like bar food and parking may be an issue", "description": "", "maps": "https://www.google.com/maps/search/?api=1&query=Whiskey+Red%E2%80%99s+13813+Fiji+Way%2C+Marina+Del+Rey%2C+CA+90292", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=13813+Fiji+Way%2C+Marina+Del+Rey%2C+CA+90292", "google_reviews_url": "https://www.google.com/search?q=Whiskey+Red%E2%80%99s+13813+Fiji+Way%2C+Marina+Del+Rey%2C+CA+90292+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=Whiskey+Red%E2%80%99s&find_loc=13813+Fiji+Way%2C+Marina+Del+Rey%2C+CA+90292", "phone_url": "tel:3108234522", "email_url": ""}, {"status": "Eliminated", "name": "Tony P’s", "cuisine": "American / Seafood", "capacity": 25, "address": "4445 Admiralty Way, Marina Del Rey, CA 90292", "phone": "", "email": "", "website": "", "menu": "", "google_rating": "", "google_reviews": "", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "", "ot_reviews": "", "opentable": "", "price": "$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "", "notes": "permanently closed", "description": "", "maps": "https://www.google.com/maps/search/?api=1&query=Tony+P%E2%80%99s+4445+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=4445+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292", "google_reviews_url": "https://www.google.com/search?q=Tony+P%E2%80%99s+4445+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=Tony+P%E2%80%99s&find_loc=4445+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292", "phone_url": "", "email_url": ""}, {"status": "Eliminated", "name": "George Petrelli Steak House", "cuisine": "Steakhouse", "capacity": 25, "address": "5615 Sepulveda Blvd, Culver City, CA 90230", "phone": "310-397-1438", "email": "", "website": "http://www.georgepetrellisteaks.com/", "menu": "http://www.georgepetrellisteaks.com/", "google_rating": "", "google_reviews": "", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "", "ot_reviews": "", "opentable": "https://www.opentable.com/r/george-petrellis-steakhouse-culver-city", "price": "$$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "", "notes": "expensive steak house, need more variety", "description": "", "maps": "https://www.google.com/maps/search/?api=1&query=George+Petrelli+Steak+House+5615+Sepulveda+Blvd%2C+Culver+City%2C+CA+90230", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=5615+Sepulveda+Blvd%2C+Culver+City%2C+CA+90230", "google_reviews_url": "https://www.google.com/search?q=George+Petrelli+Steak+House+5615+Sepulveda+Blvd%2C+Culver+City%2C+CA+90230+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=George+Petrelli+Steak+House&find_loc=5615+Sepulveda+Blvd%2C+Culver+City%2C+CA+90230", "phone_url": "tel:3103971438", "email_url": ""}, {"status": "Eliminated", "name": "Cast & Plow", "cuisine": "California / Coastal", "capacity": 25, "address": "4375 Admiralty Way, Marina Del Rey, CA 90292", "phone": "310-574-4333", "email": "", "website": "https://www.ritzcarlton.com/en/hotels/laxmd-the-ritz-carlton-marina-del-rey/dining/", "menu": "https://www.ritzcarlton.com/en/hotels/laxmd-the-ritz-carlton-marina-del-rey/dining/", "google_rating": "", "google_reviews": "", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "", "ot_reviews": "", "opentable": "https://www.opentable.com/cast-and-plow", "price": "$$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "", "notes": "limited options and expensive", "description": "", "maps": "https://www.google.com/maps/search/?api=1&query=Cast+%26+Plow+4375+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=4375+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292", "google_reviews_url": "https://www.google.com/search?q=Cast+%26+Plow+4375+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=Cast+%26+Plow&find_loc=4375+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292", "phone_url": "tel:3105744333", "email_url": ""}, {"status": "Eliminated", "name": "Kalaveras - Marina Del Rey", "cuisine": "Mexican", "capacity": 25, "address": "13181 Mindanao Way, Marina Del Rey, CA 90292", "phone": "310-437-0062", "email": "", "website": "https://kalaveras.com/marina-del-rey/", "menu": "https://kalaveras.com/marina-del-rey/", "google_rating": "", "google_reviews": "", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "", "ot_reviews": "", "opentable": "https://www.opentable.com/r/kalaveras-marina-del-rey", "price": "$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "", "notes": "looks like a bar", "description": "", "maps": "https://www.google.com/maps/search/?api=1&query=Kalaveras+-+Marina+Del+Rey+13181+Mindanao+Way%2C+Marina+Del+Rey%2C+CA+90292", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=13181+Mindanao+Way%2C+Marina+Del+Rey%2C+CA+90292", "google_reviews_url": "https://www.google.com/search?q=Kalaveras+-+Marina+Del+Rey+13181+Mindanao+Way%2C+Marina+Del+Rey%2C+CA+90292+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=Kalaveras+-+Marina+Del+Rey&find_loc=13181+Mindanao+Way%2C+Marina+Del+Rey%2C+CA+90292", "phone_url": "tel:3104370062", "email_url": ""}, {"status": "Eliminated", "name": "The Proud Bird", "cuisine": "Food Hall / American", "capacity": 25, "address": "11022 Aviation Blvd, Los Angeles, CA 90045", "phone": "310-670-3093", "email": "", "website": "https://theproudbird.com/", "menu": "https://theproudbird.com/", "google_rating": "", "google_reviews": "", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "", "ot_reviews": "", "opentable": "", "price": "$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "", "notes": "ppl look at planes, not the vibe we want", "description": "", "maps": "https://www.google.com/maps/search/?api=1&query=The+Proud+Bird+11022+Aviation+Blvd%2C+Los+Angeles%2C+CA+90045", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=11022+Aviation+Blvd%2C+Los+Angeles%2C+CA+90045", "google_reviews_url": "https://www.google.com/search?q=The+Proud+Bird+11022+Aviation+Blvd%2C+Los+Angeles%2C+CA+90045+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=The+Proud+Bird&find_loc=11022+Aviation+Blvd%2C+Los+Angeles%2C+CA+90045", "phone_url": "tel:3106703093", "email_url": ""}, {"status": "Eliminated", "name": "J Nichols Kitchen", "cuisine": "American", "capacity": 25, "address": "4375 Glencoe Ave, Marina del Rey, CA 90292", "phone": "310-823-2283", "email": "", "website": "https://www.jnicholskitchen.com/", "menu": "https://www.jnicholskitchen.com/", "google_rating": "", "google_reviews": "", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "", "ot_reviews": "", "opentable": "", "price": "$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "", "notes": "just a diner", "description": "", "maps": "https://www.google.com/maps/search/?api=1&query=J+Nichols+Kitchen+4375+Glencoe+Ave%2C+Marina+del+Rey%2C+CA+90292", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=4375+Glencoe+Ave%2C+Marina+del+Rey%2C+CA+90292", "google_reviews_url": "https://www.google.com/search?q=J+Nichols+Kitchen+4375+Glencoe+Ave%2C+Marina+del+Rey%2C+CA+90292+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=J+Nichols+Kitchen&find_loc=4375+Glencoe+Ave%2C+Marina+del+Rey%2C+CA+90292", "phone_url": "tel:3108232283", "email_url": ""}, {"status": "Eliminated", "name": "The Warehouse Restaurant", "cuisine": "American / Seafood", "capacity": 25, "address": "4499 Admiralty Way, Marina Del Rey, CA 90292", "phone": "310-823-5451", "email": "", "website": "https://www.mdrwarehouse.com/", "menu": "https://www.mdrwarehouse.com/", "google_rating": "", "google_reviews": "", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "", "ot_reviews": "", "opentable": "", "price": "$$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "", "notes": "gross", "description": "", "maps": "https://www.google.com/maps/search/?api=1&query=The+Warehouse+Restaurant+4499+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=4499+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292", "google_reviews_url": "https://www.google.com/search?q=The+Warehouse+Restaurant+4499+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=The+Warehouse+Restaurant&find_loc=4499+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292", "phone_url": "tel:3108235451", "email_url": ""}, {"status": "Research", "name": "Brizo Bar & Restaurant", "cuisine": "California / Coastal", "capacity": 25, "address": "4360 Via Marina, Marina del Rey, CA 90292", "phone": "424-443-5807", "email": "info@brizo.com", "website": "https://www.brizomdr.com/", "menu": "https://www.brizomdr.com/menus", "google_rating": "", "google_reviews": "", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "", "ot_reviews": "", "opentable": "https://www.opentable.com/restaurant/profile/1076872", "price": "$$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "", "notes": "if we make it for lunch, prices are reasonable. Lunch options are limited", "description": "", "maps": "https://www.google.com/maps/search/?api=1&query=Brizo+Bar+%26+Restaurant+4360+Via+Marina%2C+Marina+del+Rey%2C+CA+90292", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=4360+Via+Marina%2C+Marina+del+Rey%2C+CA+90292", "google_reviews_url": "https://www.google.com/search?q=Brizo+Bar+%26+Restaurant+4360+Via+Marina%2C+Marina+del+Rey%2C+CA+90292+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=Brizo+Bar+%26+Restaurant&find_loc=4360+Via+Marina%2C+Marina+del+Rey%2C+CA+90292", "phone_url": "tel:4244435807", "email_url": "mailto:info@brizo.com"}];
+
+function storageKey(name) { return 'holy_cross_' + name.replace(/\W+/g,'_'); }
+function loadEdit(r) {
+  try { return JSON.parse(localStorage.getItem(storageKey(r.name)) || '{}'); } catch(e) { return {}; }
+}
+function saveEdit(name, field, value) {
+  const r = restaurants.find(x => x.name === name);
+  const obj = loadEdit(r);
+  obj[field] = value;
+  localStorage.setItem(storageKey(name), JSON.stringify(obj));
+  updateSummary();
+}
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, function(m) {
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m];
+  });
+}
+function safeName(s) { return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+function button(url, label) {
+  return url ? '<a class="btn" target="_blank" rel="noopener" href="'+esc(url)+'">'+label+'</a>' : '';
+}
+function ratingBlock(label, rating, count, url) {
+  const icon = label === 'Google' ? '⭐' : (label === 'Yelp' ? '💬' : '🍷');
+  if (!rating) return '<div class="rating"><strong>—</strong><span>'+label+'</span></div>';
+  const html = '<strong>'+icon+' '+esc(rating)+' ★</strong><span>'+label+(count ? ' • '+esc(count)+' reviews' : '')+'</span>';
+  return url ? '<a class="rating" target="_blank" rel="noopener" href="'+esc(url)+'">'+html+'</a>' : '<div class="rating">'+html+'</div>';
+}
+function renderCard(r) {
+  const e = loadEdit(r);
+  const status = e.status || r.status;
+  const score = e.score || '';
+  const notes = (e.notes !== undefined) ? e.notes : r.notes;
+  const opts = ['Research','Waiting','Follow Up','Responded','Tour Scheduled','Finalist','On Hold','Eliminated','Booked']
+    .map(x => '<option '+(x===status?'selected':'')+'>'+x+'</option>').join('');
+  return `
+  <article class="card" data-status="${esc(status)}">
+    <div class="card-inner">
+      <div class="photo"><div><div class="icon">🍽️</div><strong>${esc(r.name)}</strong><small>Restaurant photo can go here</small></div></div>
+      <div class="body">
+        <div class="top">
+          <div>
+            <h2>${esc(r.name)}</h2>
+            <div class="meta">${esc(r.cuisine)} • ${esc(r.price)} • Capacity: ${r.capacity}<br>${esc(r.address)}</div>
+          </div>
+          <span class="badge">${esc(status)}</span>
+        </div>
+
+        <div class="ratings">
+          ${ratingBlock('Google',r.google_rating,r.google_reviews,r.google_reviews_url)}
+          ${ratingBlock('Yelp',r.yelp_rating,r.yelp_reviews,r.yelp_url)}
+          ${ratingBlock('OpenTable',r.ot_rating,r.ot_reviews,r.opentable)}
+        </div>
+
+        <div class="actions">
+          ${button(r.maps,'📍 Map')}
+          ${button(r.directions,'🚗 Directions')}
+          ${button(r.menu,'🍽️ Menu')}
+          ${button(r.website,'🌐 Website')}
+          ${button(r.google_reviews_url,'⭐ Google')}
+          ${button(r.yelp_url,'💬 Yelp')}
+          ${button(r.opentable,'🍷 OpenTable')}
+          ${button(r.phone_url,'📞 Call')}
+          ${button(r.email_url,'✉️ Email')}
+        </div>
+
+        ${r.description ? `<div class="details">${esc(r.description)}</div>` : ''}
+
+        <div class="editbox">
+          <div class="smallrow">
+            <div>
+              <label>Status</label>
+              <select onchange="saveEdit('${safeName(r.name)}','status',this.value); render();">${opts}</select>
+            </div>
+            <div>
+              <label>Your score (1–10)</label>
+              <input type="number" min="1" max="10" value="${esc(score)}" onchange="saveEdit('${safeName(r.name)}','score',this.value)">
+            </div>
+          </div>
+          <label>Your notes</label>
+          <textarea onchange="saveEdit('${safeName(r.name)}','notes',this.value)">${esc(notes)}</textarea>
+        </div>
+      </div>
+    </div>
+  </article>`;
+}
+
+let activeFilter = 'All';
+
+function render() {
+  const term = document.getElementById('search').value.toLowerCase().trim();
+  const filtered = restaurants.filter(r => {
+    const st = loadEdit(r).status || r.status;
+    return (activeFilter === 'All' || st === activeFilter) &&
+           ((r.name+' '+r.cuisine).toLowerCase().includes(term));
+  });
+  document.getElementById('grid').innerHTML = filtered.map(renderCard).join('');
+  updateSummary();
+}
+
+function updateSummary() {
+  const statuses = restaurants.map(r => loadEdit(r).status || r.status);
+  document.getElementById('countAll').textContent = restaurants.length;
+  document.getElementById('countWaiting').textContent = statuses.filter(x=>x==='Waiting').length;
+  document.getElementById('countResearch').textContent = statuses.filter(x=>x==='Research').length;
+  document.getElementById('countHold').textContent = statuses.filter(x=>x==='On Hold').length;
+  document.getElementById('countEliminated').textContent = statuses.filter(x=>x==='Eliminated').length;
+}
+
+document.querySelectorAll('.filter').forEach(b => b.addEventListener('click', function() {
+  document.querySelectorAll('.filter').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  activeFilter = b.dataset.filter;
+  render();
+}));
+
+document.getElementById('search').addEventListener('input', render);
+render();
+</script>
+</body>
+</html>
