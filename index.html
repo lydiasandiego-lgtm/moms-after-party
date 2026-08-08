@@ -268,6 +268,24 @@ function ratingBlock(label, rating, count, url) {
   const html = '<strong>'+icon+' '+esc(rating)+' ★</strong><span>'+label+(count ? ' • '+esc(count)+' reviews' : '')+'</span>';
   return url ? '<a class="rating" target="_blank" rel="noopener" href="'+esc(url)+'">'+html+'</a>' : '<div class="rating">'+html+'</div>';
 }
+function photoPanel(r) {
+  if (r.hero_photo) {
+    const photos = [r.hero_photo].concat(r.patio_photos || []);
+    const labels = ['Patio', 'Covered patio', 'Seating view'];
+    const thumbs = photos.slice(1).map((src, i) =>
+      `<div class="thumb-wrap">
+        <img class="thumb" src="${src}" alt="${esc(r.name)} patio photo ${i+2}" onclick="openLightbox(this.src)">
+        <span class="thumb-label">${labels[i+1] || 'Patio'}</span>
+      </div>`
+    ).join('');
+    return `<div class="photo-gallery">
+      <img class="hero-photo" src="${r.hero_photo}" alt="${esc(r.name)} patio" onclick="openLightbox(this.src)">
+      ${thumbs ? `<div class="photo-thumbs">${thumbs}</div>` : ''}
+    </div>`;
+  }
+  return `<div class="photo"><div><div class="icon">🍽️</div><strong>${esc(r.name)}</strong><small>Restaurant photo can go here</small></div></div>`;
+}
+
 function renderCard(r) {
   const e = loadEdit(r);
   const status = e.status || r.status;
