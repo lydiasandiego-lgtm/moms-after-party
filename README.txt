@@ -1,17 +1,11 @@
-Mom's After Party — corrected header package
+Approved mockup header update
 
-This version fixes:
-- Mom's face/hat being cut off
-- Keeps the cream + gold floral header
-- Keeps the working restaurant cards
-- Keeps Nardò patio photos
-- Keeps editable Status / Score / Notes
+Upload ALL files in this package to the ROOT of the GitHub repository:
+- index.html
+- mom-real-portrait-red.jpg
+- header-florals.png
+- nardo-patio-wide.jpg
+- nardo-patio-covered.jpg
+- nardo-patio-seating.jpg
 
-Upload ALL files to the ROOT of the GitHub repository:
-index.html
-mom-portrait-full-face.jpg
-nardo-patio-wide.jpg
-nardo-patio-covered.jpg
-nardo-patio-seating.jpg
-
-Replace index.html when prompted, then commit.
+This version uses the real portrait (not AI-generated) and preserves the restaurant functionality.
