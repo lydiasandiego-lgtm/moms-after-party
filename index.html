@@ -49,13 +49,58 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:26px}
 .card[data-status="Eliminated"]{opacity:.88;border-left:5px solid #9b4d4d}
 .card[data-status="Eliminated"] .badge{background:#f5dddd;color:#7a2e2e}
 
+
+.memorial-header{
+  max-width:1180px;
+  margin:0 auto;
+  text-align:center;
+}
+.memorial-photo{
+  width:104px;
+  height:104px;
+  object-fit:cover;
+  border-radius:50%;
+  border:4px solid rgba(255,255,255,.95);
+  box-shadow:0 4px 18px rgba(0,0,0,.18);
+  margin:0 auto 12px;
+  display:block;
+}
+.memorial-title{
+  margin:0;
+  font-size:32px;
+  font-weight:700;
+  letter-spacing:.2px;
+}
+.memorial-date{
+  margin-top:7px;
+  font-size:15px;
+  opacity:.95;
+}
+.memorial-subtitle{
+  margin-top:5px;
+  font-size:14px;
+  opacity:.88;
+  font-style:italic;
+}
+.memorial-divider{
+  width:110px;
+  height:1px;
+  background:rgba(255,255,255,.55);
+  margin:14px auto 0;
+}
+
 </style>
 </head>
 <body>
-<header><div class="inner">
-<h1>Mom's After Party</h1>
-
-</div></header>
+<header>
+  <div class="memorial-header">
+    <img class="memorial-photo" src="mom-portrait.png" alt="Mary Anne Moreno">
+    <h1 class="memorial-title">Mom's After Party</h1>
+    <div class="memorial-date">Saturday, August 22, 2026 • 1:30 PM</div>
+    <div class="memorial-subtitle">A celebration of Mary Anne Moreno</div>
+    <div class="memorial-divider"></div>
+  </div>
+</header>
 
 <div class="wrap">
 <div class="summary">
