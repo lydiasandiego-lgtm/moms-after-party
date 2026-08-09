@@ -862,7 +862,7 @@ db.collection('restaurants').onSnapshot(async snapshot => {
 
   const el = document.getElementById('sharedSyncStatus');
   if (el) el.textContent = 'Connected — edits are shared live with everyone.';
-  render();
+  safeSharedRender();
 }, err => {
   console.error(err);
   const el = document.getElementById('sharedSyncStatus');
@@ -1032,6 +1032,17 @@ async function uploadRestaurantFiles(name, fileList, inputId){
     console.error(err);
     if (statusEl) statusEl.textContent = 'Upload failed: ' + err.message;
   }
+}
+
+
+function safeSharedRender(){
+  const active = document.activeElement;
+  const isEditing = active && (
+    active.matches('.editbox textarea') ||
+    active.matches('.editbox input') ||
+    active.matches('.editbox select')
+  );
+  if (!isEditing) render();
 }
 
 function esc(s) {
