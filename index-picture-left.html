@@ -1,0 +1,918 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mom's After Party</title>
+<style>
+:root{--bg:#f7f5f1;--card:#fff;--ink:#29333a;--muted:#6b7280;--deep:#30443c;--line:#ddd8cf}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(135deg,#30443c,#5d7469);color:white;padding:28px 20px}
+header .inner{max-width:1180px;margin:0 auto}
+h1{margin:0 0 6px;font-size:30px} header p{margin:0;opacity:.92}
+.wrap{max-width:1180px;margin:0 auto;padding:22px}
+.summary{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:-18px 0 20px}
+.tile{background:white;border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.tile b{display:block;font-size:22px} .tile span{color:var(--muted);font-size:12px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 18px;align-items:center}
+.filter{border:1px solid var(--line);background:white;border-radius:999px;padding:9px 14px;cursor:pointer}
+.filter.active{background:var(--deep);color:white}
+.search{margin-left:auto;min-width:240px;border:1px solid var(--line);background:white;border-radius:999px;padding:9px 14px}
+.grid{display:flex;flex-direction:column;gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 3px 12px rgba(0,0,0,.045)}
+.card-inner{display:block}
+.photo{background:linear-gradient(145deg,#e8ece8,#dfe5e1);display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;min-height:290px}
+.photo .icon{font-size:48px} .photo strong{display:block;margin-top:8px} .photo small{color:var(--muted)}
+.body{padding:20px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+h2{font-size:21px;margin:0 0 4px} .meta{color:var(--muted);font-size:14px;line-height:1.45}
+.badge{font-size:12px;font-weight:700;padding:6px 9px;border-radius:999px;background:#e7ece9;white-space:nowrap}
+.ratings{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.rating{border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center;background:#fcfbf8;text-decoration:none;color:inherit}
+.rating strong{display:block;font-size:18px} .rating span{font-size:12px;color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.btn{display:inline-block;text-decoration:none;background:#eef2ef;color:#24322d;border:1px solid #d2dad5;border-radius:9px;padding:9px 10px;font-weight:600;font-size:13px}
+.btn:hover{background:#dfe7e2}
+.details{font-size:14px;line-height:1.55;margin:10px 0}
+.details b{color:#33443d}
+.editbox{border-top:1px solid var(--line);margin-top:12px;padding-top:12px}
+.editbox label{display:block;font-size:12px;color:var(--muted);margin:7px 0 4px}
+.editbox input,.editbox select,.editbox textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px;background:white;font:inherit}
+.editbox textarea{min-height:72px;resize:vertical}
+.smallrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.notice{background:#fff8e8;border:1px solid #ead7a6;border-radius:12px;padding:11px 13px;margin-bottom:16px;font-size:13px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:26px}
+@media(max-width:850px){.card-inner{grid-template-columns:1fr}.photo{min-height:140px}.summary{grid-template-columns:repeat(2,1fr)}.search{margin-left:0;min-width:100%}}
+@media(max-width:560px){h1{font-size:24px}.ratings{grid-template-columns:1fr}.smallrow{grid-template-columns:1fr}}
+
+.card[data-status="Eliminated"]{opacity:.88;border-left:5px solid #9b4d4d}
+.card[data-status="Eliminated"] .badge{background:#f5dddd;color:#7a2e2e}
+
+
+.memorial-header{
+  max-width:1180px;
+  margin:0 auto;
+  text-align:center;
+}
+.memorial-photo{
+  width:104px;
+  height:104px;
+  object-fit:cover;
+  border-radius:50%;
+  border:4px solid rgba(255,255,255,.95);
+  box-shadow:0 4px 18px rgba(0,0,0,.18);
+  margin:0 auto 12px;
+  display:block;
+}
+.memorial-title{
+  margin:0;
+  font-size:32px;
+  font-weight:700;
+  letter-spacing:.2px;
+}
+.memorial-date{
+  margin-top:7px;
+  font-size:15px;
+  opacity:.95;
+}
+.memorial-subtitle{
+  margin-top:5px;
+  font-size:14px;
+  opacity:.88;
+  font-style:italic;
+}
+.memorial-divider{
+  width:110px;
+  height:1px;
+  background:rgba(255,255,255,.55);
+  margin:14px auto 0;
+}
+
+
+.memorial-header{
+  position:relative;
+  overflow:hidden;
+  max-width:none;
+  margin:0;
+  padding:24px 18px 20px;
+  text-align:center;
+  color:#2f261f;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(220,204,165,.20), transparent 26%),
+    radial-gradient(circle at 88% 20%, rgba(210,196,160,.18), transparent 28%),
+    linear-gradient(180deg,#fffdf8 0%,#fbf5e9 100%);
+  border-bottom:1px solid #cba85f;
+}
+.memorial-header::before,
+.memorial-header::after{
+  content:"";
+  position:absolute;
+  top:-28px;
+  width:260px;
+  height:260px;
+  opacity:.32;
+  pointer-events:none;
+  background:
+    radial-gradient(ellipse at 28% 42%, rgba(255,255,255,.98) 0 12%, transparent 13%),
+    radial-gradient(ellipse at 46% 55%, rgba(250,247,238,.98) 0 15%, transparent 16%),
+    radial-gradient(ellipse at 63% 35%, rgba(255,255,255,.98) 0 11%, transparent 12%),
+    radial-gradient(ellipse at 48% 60%, rgba(136,154,112,.38) 0 9%, transparent 10%),
+    radial-gradient(ellipse at 35% 70%, rgba(154,169,126,.34) 0 8%, transparent 9%);
+}
+.memorial-header::before{left:-65px;transform:rotate(-16deg)}
+.memorial-header::after{right:-65px;transform:scaleX(-1) rotate(-16deg)}
+.memorial-photo{
+  width:138px;
+  height:138px;
+  object-fit:cover;
+  object-position:center 28%;
+  border-radius:50%;
+  border:5px solid #fff;
+  box-shadow:0 4px 18px rgba(78,58,30,.16),0 0 0 1px #d8b76e;
+  margin:0 auto 10px;
+  display:block;
+  position:relative;
+  z-index:1;
+}
+.memorial-title{
+  position:relative;
+  z-index:1;
+  margin:0;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:44px;
+  line-height:1.05;
+  font-weight:500;
+  letter-spacing:.2px;
+  color:#2f241c;
+}
+.memorial-date{
+  position:relative;
+  z-index:1;
+  margin-top:9px;
+  font-size:16px;
+  color:#5f5b56;
+  font-weight:600;
+}
+.memorial-subtitle{
+  position:relative;
+  z-index:1;
+  margin-top:6px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:18px;
+  font-style:italic;
+  color:#a27425;
+}
+.memorial-divider{
+  position:relative;
+  z-index:1;
+  width:170px;
+  height:1px;
+  margin:14px auto 0;
+  background:linear-gradient(90deg,transparent,#caa55b 20%,#caa55b 80%,transparent);
+}
+.memorial-divider::after{
+  content:"♡";
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-52%);
+  background:#fbf5e9;
+  padding:0 8px;
+  color:#b68c42;
+  font-size:17px;
+}
+@media(max-width:700px){
+  .memorial-header{padding:18px 12px 16px}
+  .memorial-header::before,.memorial-header::after{width:175px;height:175px;opacity:.24}
+  .memorial-photo{width:108px;height:108px}
+  .memorial-title{font-size:32px}
+  .memorial-date{font-size:14px}
+  .memorial-subtitle{font-size:16px}
+}
+
+
+.photo-gallery{display:flex;flex-direction:column;background:#edf1ee;min-height:320px;overflow:hidden}
+.hero-photo{width:100%;height:205px;object-fit:cover;display:block;cursor:pointer}
+.photo-thumbs{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:6px}
+.thumb-wrap{position:relative;min-width:0}
+.thumb{width:100%;height:92px;object-fit:cover;border-radius:8px;display:block;cursor:pointer}
+.thumb-label{position:absolute;left:6px;bottom:6px;background:rgba(0,0,0,.62);color:#fff;font-size:10px;padding:3px 6px;border-radius:999px}
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.84);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px}
+.lightbox.open{display:flex}
+.lightbox img{max-width:94vw;max-height:90vh;border-radius:12px;box-shadow:0 18px 60px rgba(0,0,0,.4)}
+.lightbox-close{position:absolute;top:18px;right:24px;color:#fff;font-size:34px;cursor:pointer;border:0;background:transparent}
+
+
+/* FINAL memorial header matching approved mockup */
+.memorial-header{
+  position:relative;
+  overflow:hidden;
+  max-width:none;
+  margin:0;
+  padding:18px 16px 16px;
+  text-align:center;
+  color:#2f241c;
+  background:
+    linear-gradient(rgba(255,253,248,.95),rgba(251,246,236,.97)),
+    url('header-florals.png') center/cover no-repeat;
+  border-bottom:1px solid #d1ae63;
+}
+.memorial-photo{
+  width:132px;
+  height:132px;
+  object-fit:cover;
+  object-position:center center;
+  border-radius:50%;
+  border:5px solid #fff;
+  box-shadow:0 4px 18px rgba(78,58,30,.16),0 0 0 1px #d8b76e;
+  margin:0 auto 10px;
+  display:block;
+  position:relative;
+  z-index:1;
+  background:#f7f3eb;
+}
+.memorial-title{
+  position:relative;
+  z-index:1;
+  margin:0;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:42px;
+  line-height:1.03;
+  font-weight:500;
+  color:#2f241c;
+}
+.memorial-date{
+  position:relative;
+  z-index:1;
+  margin-top:8px;
+  font-size:14px;
+  color:#645f59;
+  font-weight:600;
+}
+.memorial-subtitle{
+  position:relative;
+  z-index:1;
+  margin-top:5px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:17px;
+  font-style:italic;
+  color:#a47429;
+}
+.memorial-divider{
+  position:relative;
+  z-index:1;
+  width:210px;
+  height:1px;
+  margin:12px auto 0;
+  background:linear-gradient(90deg,transparent,#caa55b 18%,#caa55b 82%,transparent);
+}
+.memorial-divider::after{
+  content:"♡";
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-54%);
+  background:#fbf6ec;
+  padding:0 8px;
+  color:#b98c40;
+  font-size:17px;
+}
+@media(max-width:700px){
+  .memorial-header{
+    padding:14px 10px 14px;
+    background:
+      linear-gradient(rgba(255,253,248,.96),rgba(251,246,236,.98)),
+      url('header-florals.png') center top/auto 260px no-repeat;
+  }
+  .memorial-photo{width:108px;height:108px}
+  .memorial-title{font-size:31px}
+  .memorial-date{font-size:13px}
+  .memorial-subtitle{font-size:15px}
+}
+
+
+/* HEADER CORRECTION: visible flowers + uncropped real portrait */
+.memorial-header{
+  position:relative !important;
+  overflow:hidden !important;
+  margin:0 !important;
+  max-width:none !important;
+  padding:18px 16px 16px !important;
+  min-height:285px;
+  text-align:center !important;
+  color:#2f241c !important;
+  background:#fbf6ec !important;
+  border-bottom:1px solid #d1ae63 !important;
+}
+.memorial-flower{
+  position:absolute;
+  top:0;
+  height:100%;
+  width:auto;
+  max-width:36%;
+  object-fit:cover;
+  z-index:0;
+  pointer-events:none;
+}
+.memorial-flower.left{left:0;object-position:left center}
+.memorial-flower.right{right:0;object-position:right center}
+.memorial-photo{
+  width:138px !important;
+  height:138px !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+  border-radius:50% !important;
+  border:5px solid #fff !important;
+  box-shadow:0 4px 18px rgba(78,58,30,.16),0 0 0 1px #d8b76e !important;
+  margin:0 auto 10px !important;
+  display:block !important;
+  position:relative !important;
+  z-index:2 !important;
+  background:#f7f3eb !important;
+}
+.memorial-title,
+.memorial-date,
+.memorial-subtitle,
+.memorial-divider{position:relative !important;z-index:2 !important}
+.memorial-title{
+  margin:0 !important;
+  font-family:Georgia,"Times New Roman",serif !important;
+  font-size:42px !important;
+  line-height:1.03 !important;
+  font-weight:500 !important;
+  color:#2f241c !important;
+}
+.memorial-date{
+  margin-top:8px !important;
+  font-size:14px !important;
+  color:#645f59 !important;
+  font-weight:600 !important;
+}
+.memorial-subtitle{
+  margin-top:5px !important;
+  font-family:Georgia,"Times New Roman",serif !important;
+  font-size:17px !important;
+  font-style:italic !important;
+  color:#a47429 !important;
+}
+.memorial-divider{
+  width:210px !important;
+  height:1px !important;
+  margin:12px auto 0 !important;
+  background:linear-gradient(90deg,transparent,#caa55b 18%,#caa55b 82%,transparent) !important;
+}
+@media(max-width:700px){
+  .memorial-header{min-height:245px;padding:14px 8px 12px !important}
+  .memorial-flower{max-width:42%;opacity:.72}
+  .memorial-photo{width:108px !important;height:108px !important}
+  .memorial-title{font-size:31px !important}
+  .memorial-date{font-size:13px !important}
+  .memorial-subtitle{font-size:15px !important}
+}
+
+
+.restaurant-photo-link-row{
+  margin:10px 0 4px;
+  padding:10px 12px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:#fcfbf8;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  font-size:13px;
+}
+.restaurant-photo-link-row span{color:var(--muted);font-weight:600}
+.photo-link-btn{
+  border:0;
+  background:transparent;
+  color:#7a5a20;
+  text-decoration:underline;
+  cursor:pointer;
+  font-weight:700;
+  padding:4px 0;
+  font-size:13px;
+}
+.gallery-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.82);
+  display:none;
+  z-index:9999;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+.gallery-modal.open{display:flex}
+.gallery-panel{
+  width:min(980px,94vw);
+  max-height:92vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:16px;
+  padding:18px;
+  position:relative;
+}
+.gallery-panel h3{margin:0 40px 14px 0;font-size:20px}
+.gallery-close{
+  position:absolute;
+  top:10px;
+  right:14px;
+  border:0;
+  background:transparent;
+  font-size:30px;
+  cursor:pointer;
+}
+.gallery-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+.gallery-grid img{
+  width:100%;
+  height:260px;
+  object-fit:cover;
+  border-radius:12px;
+  border:1px solid var(--line);
+}
+@media(max-width:760px){
+  .restaurant-photo-link-row{align-items:flex-start;flex-direction:column}
+  .gallery-grid{grid-template-columns:1fr}
+  .gallery-grid img{height:auto}
+}
+
+
+.shared-status{
+  margin:10px 0 12px;
+  padding:9px 12px;
+  border-radius:10px;
+  background:#eef6ef;
+  border:1px solid #cfded1;
+  color:#35513c;
+  font-size:13px;
+}
+.editbox textarea.description-box{min-height:84px}
+
+
+/* Final header: portrait left, original event text right. Everything below header unchanged. */
+.hero-inner{
+  max-width:1130px;
+  margin:0 auto;
+  min-height:220px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:28px;
+  padding:18px 20px;
+  position:relative;
+  z-index:2;
+}
+.portrait{
+  width:145px !important;
+  height:190px !important;
+  border-radius:0 !important;
+  border:0 !important;
+  padding:0 !important;
+  overflow:hidden !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  flex:0 0 auto;
+}
+.portrait img{
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  object-position:center !important;
+  display:block;
+  border-radius:0 !important;
+}
+.hero-copy{
+  text-align:center;
+  position:relative;
+  z-index:2;
+}
+.hero-copy h1{margin:0 0 8px}
+@media(max-width:650px){
+  .hero-inner{gap:14px;padding:14px 10px;min-height:180px}
+  .portrait{width:105px !important;height:145px !important}
+  .hero-copy h1{font-size:30px}
+}
+
+
+/* FINAL TOP BANNER — portrait left, event text right */
+.memorial-header{
+  background:#fbf6ec !important;
+  border-bottom:1px solid #d1ae63 !important;
+  margin:0 !important;
+  padding:0 !important;
+  min-height:0 !important;
+  overflow:hidden !important;
+}
+.banner-inner{
+  max-width:1180px;
+  margin:0 auto;
+  padding:18px 22px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:30px;
+}
+.banner-photo{
+  flex:0 0 170px;
+}
+.banner-photo img{
+  display:block;
+  width:170px;
+  height:auto;
+  max-height:225px;
+  object-fit:contain;
+  object-position:center;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+}
+.banner-copy{
+  flex:1;
+  text-align:center;
+  min-width:0;
+}
+.banner-copy h1{
+  margin:0 0 8px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:42px;
+  line-height:1.05;
+  font-weight:600;
+  color:#2f241c;
+}
+.banner-date{
+  font-size:14px;
+  font-weight:700;
+  color:#66615b;
+}
+.banner-subtitle{
+  margin-top:5px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:17px;
+  font-style:italic;
+  color:#a47429;
+}
+.banner-divider{
+  width:210px;
+  margin:10px auto 0;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#b98c40;
+}
+.banner-divider span{
+  height:1px;
+  background:#caa55b;
+  flex:1;
+}
+.banner-divider b{
+  font-size:18px;
+  font-weight:400;
+  line-height:1;
+}
+@media(max-width:650px){
+  .banner-inner{gap:14px;padding:12px 10px}
+  .banner-photo{flex-basis:105px}
+  .banner-photo img{width:105px;max-height:155px}
+  .banner-copy h1{font-size:29px}
+  .banner-date{font-size:12px}
+  .banner-subtitle{font-size:14px}
+  .banner-divider{width:150px}
+}
+
+</style>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+
+</head>
+<body>
+<header class="memorial-header">
+  <div class="banner-inner">
+    <div class="banner-photo">
+      <img src="MomRedShirt.jpg" alt="Mary Anne Moreno">
+    </div>
+    <div class="banner-copy">
+      <h1>Mom's After Party</h1>
+      <div class="banner-date">Saturday, August 22, 2026 • 1:30 PM</div>
+      <div class="banner-subtitle">A celebration of Mary Anne Moreno</div>
+      <div class="banner-divider"><span></span><b>♡</b><span></span></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+<div class="summary">
+  <div class="tile"><b id="countAll">0</b><span>Restaurants</span></div>
+  <div class="tile"><b id="countWaiting">0</b><span>Waiting</span></div>
+  <div class="tile"><b id="countResearch">0</b><span>Research</span></div>
+  <div class="tile"><b id="countHold">0</b><span>On Hold</span></div>
+<div class="tile"><b id="countEliminated">0</b><span>Eliminated</span></div>
+</div>
+
+<div class="notice">Status, score, description and notes are shared live with everyone viewing this page.</div>
+
+<div class="toolbar">
+<button class="filter active" data-filter="All">All</button>
+<button class="filter" data-filter="Waiting">Waiting</button>
+<button class="filter" data-filter="Research">Research</button>
+<button class="filter" data-filter="On Hold">On Hold</button>
+<button class="filter" data-filter="Eliminated">❌ Eliminated</button>
+<input id="search" class="search" placeholder="Search restaurant or cuisine">
+</div>
+
+<div id="grid" class="grid"></div>
+</div>
+
+<footer>Ratings are snapshots and can change. Use the live review buttons for the latest ratings.</footer>
+
+<script>
+const restaurants = [{"status": "Waiting", "name": "C&O Cucina", "cuisine": "Italian", "capacity": 25, "address": "3016 Washington Blvd, Marina Del Rey, CA 90292", "phone": "310-301-7278", "email": "", "website": "https://www.candorestaurants.com/", "menu": "https://www.candorestaurants.com/main-menu", "google_rating": "4.3", "google_reviews": "3,345", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "4.3", "ot_reviews": "136", "opentable": "https://www.opentable.com/r/c-and-o-cucina", "price": "$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "8/7 submitted online request", "notes": "Menu is limited for the event.", "maps": "https://www.google.com/maps/search/?api=1&query=C%26O+Cucina+3016+Washington+Blvd%2C+Marina+Del+Rey%2C+CA+90292", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=3016+Washington+Blvd%2C+Marina+Del+Rey%2C+CA+90292", "google_reviews_url": "https://www.google.com/search?q=C%26O+Cucina+3016+Washington+Blvd%2C+Marina+Del+Rey%2C+CA+90292+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=C%26O+Cucina&find_loc=3016+Washington+Blvd%2C+Marina+Del+Rey%2C+CA+90292", "phone_url": "tel:3103017278", "email_url": ""}, {"status": "Waiting", "name": "Bacari Culver City", "cuisine": "Mediterranean / Small Plates", "capacity": 25, "address": "3833 Main St, Culver City, CA 90232", "phone": "", "email": "", "website": "https://www.eatwithbacari.com/culver-city", "menu": "https://www.eatwithbacari.com/cc-events", "google_rating": "", "google_reviews": "", "yelp_rating": "4.4", "yelp_reviews": "59", "ot_rating": "4.8", "ot_reviews": "382", "opentable": "https://www.opentable.com/r/bacari-culver-city", "price": "$$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "8/7 submitted online request", "notes": "Wine looks good; may only have brunch at the time needed.", "maps": "https://www.google.com/maps/search/?api=1&query=Bacari+Culver+City+3833+Main+St%2C+Culver+City%2C+CA+90232", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=3833+Main+St%2C+Culver+City%2C+CA+90232", "google_reviews_url": "https://www.google.com/search?q=Bacari+Culver+City+3833+Main+St%2C+Culver+City%2C+CA+90232+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=Bacari+Culver+City&find_loc=3833+Main+St%2C+Culver+City%2C+CA+90232", "phone_url": "", "email_url": ""}, {"status": "Waiting", "name": "Nardò Culver City", "cuisine": "Italian", "description": "Nardò Culver City is a Southern Italian restaurant in the heart of downtown Culver City, known for its wood-fired Neapolitan pizzas, fresh house-made pastas, and relaxed yet polished atmosphere. Opened in 2024, it has quickly become a popular destination for casual lunches, celebrations, and date nights. Its heated covered front patio provides an inviting outdoor setting that could be an excellent fit for an intimate memorial luncheon of approximately 25 guests.", "capacity": 25, "address": "9725 Culver Blvd, Culver City, CA 90232", "phone": "310-425-8605", "email": "gm.cc@nardoitalian.com", "website": "https://www.nardoitalian.com/", "menu": "https://www.nardoitalian.com/", "google_rating": "4.5", "google_reviews": "232", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "4.5", "ot_reviews": "106", "opentable": "https://www.opentable.com/r/nardo-culver-city", "price": "$$$", "private_room": "Ask", "private_patio": "Heated patio", "parking": "", "inquiry": "8/7 emailed GM", "notes": "Awaiting response.", "maps": "https://www.google.com/maps/search/?api=1&query=Nard%C3%B2+Culver+City+9725+Culver+Blvd%2C+Culver+City%2C+CA+90232", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=9725+Culver+Blvd%2C+Culver+City%2C+CA+90232", "google_reviews_url": "https://www.google.com/search?q=Nard%C3%B2+Culver+City+9725+Culver+Blvd%2C+Culver+City%2C+CA+90232+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=Nard%C3%B2+Culver+City&find_loc=9725+Culver+Blvd%2C+Culver+City%2C+CA+90232", "phone_url": "tel:3104258605", "email_url": "mailto:gm.cc@nardoitalian.com", "hero_photo": "nardo-patio-wide.jpg", "patio_photos": ["nardo-patio-covered.jpg", "nardo-patio-seating.jpg"]}, {"status": "On Hold", "name": "BOA Steakhouse Manhattan Beach", "cuisine": "Steakhouse", "capacity": 25, "address": "3110 N Sepulveda Blvd, Manhattan Beach, CA 90266", "phone": "310-683-4080", "email": "", "website": "https://boasteak.com/locations/manhattan-beach", "menu": "https://www.boasteak.com/manhattan-beach-menus/", "google_rating": "4.1", "google_reviews": "609", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "4.6", "ot_reviews": "497", "opentable": "https://www.opentable.com/restaurant/profile/1251658", "price": "$$$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "On hold", "notes": "Very nice, but expensive.", "maps": "https://www.google.com/maps/search/?api=1&query=BOA+Steakhouse+Manhattan+Beach+3110+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=3110+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266", "google_reviews_url": "https://www.google.com/search?q=BOA+Steakhouse+Manhattan+Beach+3110+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=BOA+Steakhouse+Manhattan+Beach&find_loc=3110+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266", "phone_url": "tel:3106834080", "email_url": ""}, {"status": "Waiting", "name": "Lido di Manhattan Ristorante", "cuisine": "Italian", "capacity": 25, "address": "1550 Rosecrans Ave, Manhattan Beach, CA 90266", "phone": "310-536-0730", "email": "", "website": "https://www.lidodimanhattan.com/", "menu": "https://www.lidodimanhattan.com/our-menus", "google_rating": "4.1", "google_reviews": "622", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "", "ot_reviews": "", "opentable": "", "price": "$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "8/8 submitted online request", "notes": "", "maps": "https://www.google.com/maps/search/?api=1&query=Lido+di+Manhattan+Ristorante+1550+Rosecrans+Ave%2C+Manhattan+Beach%2C+CA+90266", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=1550+Rosecrans+Ave%2C+Manhattan+Beach%2C+CA+90266", "google_reviews_url": "https://www.google.com/search?q=Lido+di+Manhattan+Ristorante+1550+Rosecrans+Ave%2C+Manhattan+Beach%2C+CA+90266+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=Lido+di+Manhattan+Ristorante&find_loc=1550+Rosecrans+Ave%2C+Manhattan+Beach%2C+CA+90266", "phone_url": "tel:3105360730", "email_url": ""}, {"status": "Waiting", "name": "Caló Kitchen + Tequila", "cuisine": "Mexican", "capacity": 25, "address": "2191 Rosecrans Ave, El Segundo, CA 90245", "phone": "", "email": "", "website": "https://www.calokitchen.com/", "menu": "https://www.calokitchen.com/", "google_rating": "", "google_reviews": "", "yelp_rating": "4.5", "yelp_reviews": "2,300", "ot_rating": "4.5", "ot_reviews": "1", "opentable": "https://www.opentable.com/r/calo-kitchen-el-segundo", "price": "$$", "private_room": "", "private_patio": "Patio", "parking": "Street / area parking", "inquiry": "8/8 submitted online request", "notes": "Outside patio does not seem like the intimate vibe wanted.", "maps": "https://www.google.com/maps/search/?api=1&query=Cal%C3%B3+Kitchen+%2B+Tequila+2191+Rosecrans+Ave%2C+El+Segundo%2C+CA+90245", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=2191+Rosecrans+Ave%2C+El+Segundo%2C+CA+90245", "google_reviews_url": "https://www.google.com/search?q=Cal%C3%B3+Kitchen+%2B+Tequila+2191+Rosecrans+Ave%2C+El+Segundo%2C+CA+90245+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=Cal%C3%B3+Kitchen+%2B+Tequila&find_loc=2191+Rosecrans+Ave%2C+El+Segundo%2C+CA+90245", "phone_url": "", "email_url": ""}, {"status": "Research", "name": "JOEY Manhattan Beach", "cuisine": "American / Global", "capacity": 25, "address": "3120 N Sepulveda Blvd, Manhattan Beach, CA 90266", "phone": "310-546-1163", "email": "", "website": "https://joeyrestaurants.com/location/joey-manhattan-beach", "menu": "https://joeyrestaurants.com/menu", "google_rating": "4.4", "google_reviews": "3,597", "yelp_rating": "4.4", "yelp_reviews": "2,700", "ot_rating": "4.6", "ot_reviews": "1,024", "opentable": "https://www.opentable.com/r/joey-manhattan-beach", "price": "$$$", "private_room": "Private event inquiry", "private_patio": "Large patio", "parking": "", "inquiry": "Not contacted", "notes": "Worth researching for a group of 25.", "maps": "https://www.google.com/maps/search/?api=1&query=JOEY+Manhattan+Beach+3120+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=3120+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266", "google_reviews_url": "https://www.google.com/search?q=JOEY+Manhattan+Beach+3120+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=JOEY+Manhattan+Beach&find_loc=3120+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266", "phone_url": "tel:3105461163", "email_url": ""}, {"status": "Research", "name": "Tin Roof Bistro", "cuisine": "American / Italian", "capacity": 25, "address": "3500 N Sepulveda Blvd, Manhattan Beach, CA 90266", "phone": "310-939-0900", "email": "", "website": "https://www.tinroofbistro.com/", "menu": "https://www.tinroofbistro.com/menu/", "google_rating": "", "google_reviews": "", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "4.7", "ot_reviews": "5,627", "opentable": "https://www.opentable.com/r/tin-roof-bistro-manhattan-beach", "price": "$$$", "private_room": "Private cellar; up to 64 seated", "private_patio": "Garden / porch", "parking": "", "inquiry": "Not contacted", "notes": "Strong event fit; private-event space can accommodate 25.", "maps": "https://www.google.com/maps/search/?api=1&query=Tin+Roof+Bistro+3500+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=3500+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266", "google_reviews_url": "https://www.google.com/search?q=Tin+Roof+Bistro+3500+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=Tin+Roof+Bistro&find_loc=3500+N+Sepulveda+Blvd%2C+Manhattan+Beach%2C+CA+90266", "phone_url": "tel:3109390900", "email_url": ""}, {"status": "Eliminated", "name": "Laurel Grill", "cuisine": "American", "capacity": 25, "address": "9300 Culver Blvd Ste 210, Culver City, CA 90232", "phone": "310-744-1440", "email": "", "website": "https://laurelgrill.com/", "menu": "https://laurelgrill.com/", "google_rating": "", "google_reviews": "", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "", "ot_reviews": "", "opentable": "", "price": "$$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "", "notes": "Cannot accommodate large parties", "description": "", "maps": "https://www.google.com/maps/search/?api=1&query=Laurel+Grill+9300+Culver+Blvd+Ste+210%2C+Culver+City%2C+CA+90232", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=9300+Culver+Blvd+Ste+210%2C+Culver+City%2C+CA+90232", "google_reviews_url": "https://www.google.com/search?q=Laurel+Grill+9300+Culver+Blvd+Ste+210%2C+Culver+City%2C+CA+90232+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=Laurel+Grill&find_loc=9300+Culver+Blvd+Ste+210%2C+Culver+City%2C+CA+90232", "phone_url": "tel:3107441440", "email_url": ""}, {"status": "Eliminated", "name": "Whiskey Red’s", "cuisine": "American / Seafood", "capacity": 25, "address": "13813 Fiji Way, Marina Del Rey, CA 90292", "phone": "310-823-4522", "email": "", "website": "https://www.whiskeyreds.com/", "menu": "https://www.whiskeyreds.com/", "google_rating": "", "google_reviews": "", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "", "ot_reviews": "", "opentable": "https://www.opentable.com/r/whiskey-reds-marina-del-rey", "price": "$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "", "notes": "Nice view of harbor but looks like bar food and parking may be an issue", "description": "", "maps": "https://www.google.com/maps/search/?api=1&query=Whiskey+Red%E2%80%99s+13813+Fiji+Way%2C+Marina+Del+Rey%2C+CA+90292", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=13813+Fiji+Way%2C+Marina+Del+Rey%2C+CA+90292", "google_reviews_url": "https://www.google.com/search?q=Whiskey+Red%E2%80%99s+13813+Fiji+Way%2C+Marina+Del+Rey%2C+CA+90292+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=Whiskey+Red%E2%80%99s&find_loc=13813+Fiji+Way%2C+Marina+Del+Rey%2C+CA+90292", "phone_url": "tel:3108234522", "email_url": ""}, {"status": "Eliminated", "name": "Tony P’s", "cuisine": "American / Seafood", "capacity": 25, "address": "4445 Admiralty Way, Marina Del Rey, CA 90292", "phone": "", "email": "", "website": "", "menu": "", "google_rating": "", "google_reviews": "", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "", "ot_reviews": "", "opentable": "", "price": "$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "", "notes": "permanently closed", "description": "", "maps": "https://www.google.com/maps/search/?api=1&query=Tony+P%E2%80%99s+4445+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=4445+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292", "google_reviews_url": "https://www.google.com/search?q=Tony+P%E2%80%99s+4445+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=Tony+P%E2%80%99s&find_loc=4445+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292", "phone_url": "", "email_url": ""}, {"status": "Eliminated", "name": "George Petrelli Steak House", "cuisine": "Steakhouse", "capacity": 25, "address": "5615 Sepulveda Blvd, Culver City, CA 90230", "phone": "310-397-1438", "email": "", "website": "http://www.georgepetrellisteaks.com/", "menu": "http://www.georgepetrellisteaks.com/", "google_rating": "", "google_reviews": "", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "", "ot_reviews": "", "opentable": "https://www.opentable.com/r/george-petrellis-steakhouse-culver-city", "price": "$$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "", "notes": "expensive steak house, need more variety", "description": "", "maps": "https://www.google.com/maps/search/?api=1&query=George+Petrelli+Steak+House+5615+Sepulveda+Blvd%2C+Culver+City%2C+CA+90230", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=5615+Sepulveda+Blvd%2C+Culver+City%2C+CA+90230", "google_reviews_url": "https://www.google.com/search?q=George+Petrelli+Steak+House+5615+Sepulveda+Blvd%2C+Culver+City%2C+CA+90230+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=George+Petrelli+Steak+House&find_loc=5615+Sepulveda+Blvd%2C+Culver+City%2C+CA+90230", "phone_url": "tel:3103971438", "email_url": ""}, {"status": "Eliminated", "name": "Cast & Plow", "cuisine": "California / Coastal", "capacity": 25, "address": "4375 Admiralty Way, Marina Del Rey, CA 90292", "phone": "310-574-4333", "email": "", "website": "https://www.ritzcarlton.com/en/hotels/laxmd-the-ritz-carlton-marina-del-rey/dining/", "menu": "https://www.ritzcarlton.com/en/hotels/laxmd-the-ritz-carlton-marina-del-rey/dining/", "google_rating": "", "google_reviews": "", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "", "ot_reviews": "", "opentable": "https://www.opentable.com/cast-and-plow", "price": "$$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "", "notes": "limited options and expensive", "description": "", "maps": "https://www.google.com/maps/search/?api=1&query=Cast+%26+Plow+4375+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=4375+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292", "google_reviews_url": "https://www.google.com/search?q=Cast+%26+Plow+4375+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=Cast+%26+Plow&find_loc=4375+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292", "phone_url": "tel:3105744333", "email_url": ""}, {"status": "Eliminated", "name": "Kalaveras - Marina Del Rey", "cuisine": "Mexican", "capacity": 25, "address": "13181 Mindanao Way, Marina Del Rey, CA 90292", "phone": "310-437-0062", "email": "", "website": "https://kalaveras.com/marina-del-rey/", "menu": "https://kalaveras.com/marina-del-rey/", "google_rating": "", "google_reviews": "", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "", "ot_reviews": "", "opentable": "https://www.opentable.com/r/kalaveras-marina-del-rey", "price": "$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "", "notes": "looks like a bar", "description": "", "maps": "https://www.google.com/maps/search/?api=1&query=Kalaveras+-+Marina+Del+Rey+13181+Mindanao+Way%2C+Marina+Del+Rey%2C+CA+90292", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=13181+Mindanao+Way%2C+Marina+Del+Rey%2C+CA+90292", "google_reviews_url": "https://www.google.com/search?q=Kalaveras+-+Marina+Del+Rey+13181+Mindanao+Way%2C+Marina+Del+Rey%2C+CA+90292+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=Kalaveras+-+Marina+Del+Rey&find_loc=13181+Mindanao+Way%2C+Marina+Del+Rey%2C+CA+90292", "phone_url": "tel:3104370062", "email_url": ""}, {"status": "Eliminated", "name": "The Proud Bird", "cuisine": "Food Hall / American", "capacity": 25, "address": "11022 Aviation Blvd, Los Angeles, CA 90045", "phone": "310-670-3093", "email": "", "website": "https://theproudbird.com/", "menu": "https://theproudbird.com/", "google_rating": "", "google_reviews": "", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "", "ot_reviews": "", "opentable": "", "price": "$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "", "notes": "ppl look at planes, not the vibe we want", "description": "", "maps": "https://www.google.com/maps/search/?api=1&query=The+Proud+Bird+11022+Aviation+Blvd%2C+Los+Angeles%2C+CA+90045", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=11022+Aviation+Blvd%2C+Los+Angeles%2C+CA+90045", "google_reviews_url": "https://www.google.com/search?q=The+Proud+Bird+11022+Aviation+Blvd%2C+Los+Angeles%2C+CA+90045+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=The+Proud+Bird&find_loc=11022+Aviation+Blvd%2C+Los+Angeles%2C+CA+90045", "phone_url": "tel:3106703093", "email_url": ""}, {"status": "Eliminated", "name": "J Nichols Kitchen", "cuisine": "American", "capacity": 25, "address": "4375 Glencoe Ave, Marina del Rey, CA 90292", "phone": "310-823-2283", "email": "", "website": "https://www.jnicholskitchen.com/", "menu": "https://www.jnicholskitchen.com/", "google_rating": "", "google_reviews": "", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "", "ot_reviews": "", "opentable": "", "price": "$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "", "notes": "just a diner", "description": "", "maps": "https://www.google.com/maps/search/?api=1&query=J+Nichols+Kitchen+4375+Glencoe+Ave%2C+Marina+del+Rey%2C+CA+90292", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=4375+Glencoe+Ave%2C+Marina+del+Rey%2C+CA+90292", "google_reviews_url": "https://www.google.com/search?q=J+Nichols+Kitchen+4375+Glencoe+Ave%2C+Marina+del+Rey%2C+CA+90292+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=J+Nichols+Kitchen&find_loc=4375+Glencoe+Ave%2C+Marina+del+Rey%2C+CA+90292", "phone_url": "tel:3108232283", "email_url": ""}, {"status": "Eliminated", "name": "The Warehouse Restaurant", "cuisine": "American / Seafood", "capacity": 25, "address": "4499 Admiralty Way, Marina Del Rey, CA 90292", "phone": "310-823-5451", "email": "", "website": "https://www.mdrwarehouse.com/", "menu": "https://www.mdrwarehouse.com/", "google_rating": "", "google_reviews": "", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "", "ot_reviews": "", "opentable": "", "price": "$$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "", "notes": "gross", "description": "", "maps": "https://www.google.com/maps/search/?api=1&query=The+Warehouse+Restaurant+4499+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=4499+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292", "google_reviews_url": "https://www.google.com/search?q=The+Warehouse+Restaurant+4499+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=The+Warehouse+Restaurant&find_loc=4499+Admiralty+Way%2C+Marina+Del+Rey%2C+CA+90292", "phone_url": "tel:3108235451", "email_url": ""}, {"status": "Research", "name": "Brizo Bar & Restaurant", "cuisine": "California / Coastal", "capacity": 25, "address": "4360 Via Marina, Marina del Rey, CA 90292", "phone": "424-443-5807", "email": "info@brizo.com", "website": "https://www.brizomdr.com/", "menu": "https://www.brizomdr.com/menus", "google_rating": "", "google_reviews": "", "yelp_rating": "", "yelp_reviews": "", "ot_rating": "", "ot_reviews": "", "opentable": "https://www.opentable.com/restaurant/profile/1076872", "price": "$$$", "private_room": "", "private_patio": "", "parking": "", "inquiry": "", "notes": "if we make it for lunch, prices are reasonable. Lunch options are limited", "description": "", "maps": "https://www.google.com/maps/search/?api=1&query=Brizo+Bar+%26+Restaurant+4360+Via+Marina%2C+Marina+del+Rey%2C+CA+90292", "directions": "https://www.google.com/maps/dir/?api=1&origin=Holy+Cross+Cemetery%2C+5835+W+Slauson+Ave%2C+Culver+City%2C+CA+90230&destination=4360+Via+Marina%2C+Marina+del+Rey%2C+CA+90292", "google_reviews_url": "https://www.google.com/search?q=Brizo+Bar+%26+Restaurant+4360+Via+Marina%2C+Marina+del+Rey%2C+CA+90292+Google+reviews", "yelp_url": "https://www.yelp.com/search?find_desc=Brizo+Bar+%26+Restaurant&find_loc=4360+Via+Marina%2C+Marina+del+Rey%2C+CA+90292", "phone_url": "tel:4244435807", "email_url": "mailto:info@brizo.com"}];
+
+function storageKey(name) { return 'holy_cross_' + name.replace(/\W+/g,'_'); }
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCg03_K2jrypRgMI9kmKwu6rFGnBRe1N_c",
+  authDomain: "mom-s-after-party.firebaseapp.com",
+  projectId: "mom-s-after-party",
+  storageBucket: "mom-s-after-party.firebasestorage.app",
+  messagingSenderId: "385543957210",
+  appId: "1:385543957210:web:62fa2339189b774bdf53e3",
+  measurementId: "G-P7JYHZVKL6"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const sharedEdits = {};
+let sharedReady = false;
+let saveTimers = {};
+
+function docIdFor(name){
+  return name.normalize('NFKD').replace(/[^\w-]+/g,'_').replace(/^_+|_+$/g,'').toLowerCase();
+}
+
+function oldLocalEdit(r){
+  try { return JSON.parse(localStorage.getItem(storageKey(r.name)) || '{}'); }
+  catch(e) { return {}; }
+}
+
+function loadEdit(r) {
+  const live = sharedEdits[r.name];
+  if (live) return live;
+  return oldLocalEdit(r);
+}
+
+async function saveEdit(name, field, value) {
+  if (!sharedEdits[name]) sharedEdits[name] = {};
+  sharedEdits[name][field] = value;
+  updateSummary();
+
+  const id = docIdFor(name);
+  try {
+    await db.collection('restaurants').doc(id).set({
+      name,
+      [field]: value,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+    const el = document.getElementById('sharedSyncStatus');
+    if (el) el.textContent = 'Saved — changes are shared live with everyone.';
+  } catch (err) {
+    console.error(err);
+    const el = document.getElementById('sharedSyncStatus');
+    if (el) el.textContent = 'Could not save shared changes. Check Firestore rules and internet connection.';
+  }
+}
+
+function queueSave(name, field, value) {
+  const key = name + '|' + field;
+  clearTimeout(saveTimers[key]);
+  saveTimers[key] = setTimeout(() => saveEdit(name, field, value), 450);
+}
+
+async function migrateOldBrowserEditsIfNeeded(existingNames){
+  for (const r of restaurants) {
+    if (existingNames.has(r.name)) continue;
+    const old = oldLocalEdit(r);
+    const seed = {};
+    if (old.status !== undefined) seed.status = old.status;
+    if (old.score !== undefined) seed.score = old.score;
+    if (old.notes !== undefined) seed.notes = old.notes;
+    if (old.description !== undefined) seed.description = old.description;
+
+    // Preserve the existing Nardò description as the first shared description.
+    if (seed.description === undefined && r.description) seed.description = r.description;
+
+    if (Object.keys(seed).length) {
+      await db.collection('restaurants').doc(docIdFor(r.name)).set({
+        name: r.name,
+        ...seed,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, {merge:true});
+    }
+  }
+}
+
+db.collection('restaurants').onSnapshot(async snapshot => {
+  const existingNames = new Set();
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    if (!data.name) return;
+    existingNames.add(data.name);
+    sharedEdits[data.name] = data;
+  });
+
+  if (!sharedReady) {
+    sharedReady = true;
+    await migrateOldBrowserEditsIfNeeded(existingNames);
+  }
+
+  const el = document.getElementById('sharedSyncStatus');
+  if (el) el.textContent = 'Connected — edits are shared live with everyone.';
+  render();
+}, err => {
+  console.error(err);
+  const el = document.getElementById('sharedSyncStatus');
+  if (el) el.textContent = 'Shared editing is not connected. Check Firestore setup/rules.';
+  render();
+});
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, function(m) {
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m];
+  });
+}
+function safeName(s) { return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+function button(url, label) {
+  return url ? '<a class="btn" target="_blank" rel="noopener" href="'+esc(url)+'">'+label+'</a>' : '';
+}
+function ratingBlock(label, rating, count, url) {
+  const icon = label === 'Google' ? '⭐' : (label === 'Yelp' ? '💬' : '🍷');
+  if (!rating) return '<div class="rating"><strong>—</strong><span>'+label+'</span></div>';
+  const html = '<strong>'+icon+' '+esc(rating)+' ★</strong><span>'+label+(count ? ' • '+esc(count)+' reviews' : '')+'</span>';
+  return url ? '<a class="rating" target="_blank" rel="noopener" href="'+esc(url)+'">'+html+'</a>' : '<div class="rating">'+html+'</div>';
+}
+function photoPanel(r) {
+  if (r.hero_photo) {
+    const photos = [r.hero_photo].concat(r.patio_photos || []);
+    const labels = ['Patio', 'Covered patio', 'Seating view'];
+    const thumbs = photos.slice(1).map((src, i) =>
+      `<div class="thumb-wrap">
+        <img class="thumb" src="${src}" alt="${esc(r.name)} patio photo ${i+2}" onclick="openLightbox(this.src)">
+        <span class="thumb-label">${labels[i+1] || 'Patio'}</span>
+      </div>`
+    ).join('');
+    return `<div class="photo-gallery">
+      <img class="hero-photo" src="${r.hero_photo}" alt="${esc(r.name)} patio" onclick="openLightbox(this.src)">
+      ${thumbs ? `<div class="photo-thumbs">${thumbs}</div>` : ''}
+    </div>`;
+  }
+  return `<div class="photo"><div><div class="icon">🍽️</div><strong>${esc(r.name)}</strong><small>Restaurant photo can go here</small></div></div>`;
+}
+
+function renderCard(r) {
+  const e = loadEdit(r);
+  const status = e.status || r.status;
+  const score = e.score || '';
+  const notes = (e.notes !== undefined) ? e.notes : r.notes;
+  const opts = ['Research','Waiting','Follow Up','Responded','Tour Scheduled','Finalist','On Hold','Eliminated','Booked']
+    .map(x => '<option '+(x===status?'selected':'')+'>'+x+'</option>').join('');
+  return `
+  <article class="card" data-status="${esc(status)}">
+    <div class="card-inner">
+      <div class="body">
+        <div class="top">
+          <div>
+            <h2>${esc(r.name)}</h2>
+            <div class="meta">${esc(r.cuisine)} • ${esc(r.price)} • Capacity: ${r.capacity}<br>${esc(r.address)}</div>
+          </div>
+          <span class="badge">${esc(status)}</span>
+        </div>
+
+        <div class="ratings">
+          ${ratingBlock('Google',r.google_rating,r.google_reviews,r.google_reviews_url)}
+          ${ratingBlock('Yelp',r.yelp_rating,r.yelp_reviews,r.yelp_url)}
+          ${ratingBlock('OpenTable',r.ot_rating,r.ot_reviews,r.opentable)}
+        </div>
+
+        <div class="actions">
+          ${button(r.maps,'📍 Map')}
+          ${button(r.directions,'🚗 Directions')}
+          ${button(r.menu,'🍽️ Menu')}
+          ${button(r.website,'🌐 Website')}
+          ${button(r.google_reviews_url,'⭐ Google')}
+          ${button(r.yelp_url,'💬 Yelp')}
+          ${button(r.opentable,'🍷 OpenTable')}
+          ${button(r.phone_url,'📞 Call')}
+          ${button(r.email_url,'✉️ Email')}
+        </div>
+
+        <div class="editbox">
+          <div class="smallrow">
+            <div>
+              <label>Status</label>
+              <select onchange="saveEdit('${safeName(r.name)}','status',this.value); render();">${opts}</select>
+            </div>
+            <div>
+              <label>Your score (1–10)</label>
+              <input type="number" min="1" max="10" value="${esc(score)}" onchange="saveEdit('${safeName(r.name)}','score',this.value)">
+            </div>
+          </div>
+          ${r.name === 'Nardò Culver City' ? `
+          <div class="restaurant-photo-link-row">
+            <span>Private room / patio options</span>
+            <button type="button" class="photo-link-btn" onclick="openRestaurantGallery('Nardò Culver City')">View photos sent by restaurant</button>
+          </div>` : ''}
+          <label>Description</label>
+          <textarea class="description-box" oninput="queueSave('${safeName(r.name)}','description',this.value)">${esc((e.description !== undefined) ? e.description : (r.description || ''))}</textarea>
+          <label>Notes / Comments</label>
+          <textarea oninput="queueSave('${safeName(r.name)}','notes',this.value)">${esc(notes)}</textarea>
+        </div>
+      </div>
+    </div>
+  </article>`;
+}
+
+let activeFilter = 'All';
+
+function render() {
+  const term = document.getElementById('search').value.toLowerCase().trim();
+  const filtered = restaurants.filter(r => {
+    const st = loadEdit(r).status || r.status;
+    return (activeFilter === 'All' || st === activeFilter) &&
+           ((r.name+' '+r.cuisine).toLowerCase().includes(term));
+  });
+  document.getElementById('grid').innerHTML = filtered.map(renderCard).join('');
+  updateSummary();
+}
+
+function updateSummary() {
+  const statuses = restaurants.map(r => loadEdit(r).status || r.status);
+  document.getElementById('countAll').textContent = restaurants.length;
+  document.getElementById('countWaiting').textContent = statuses.filter(x=>x==='Waiting').length;
+  document.getElementById('countResearch').textContent = statuses.filter(x=>x==='Research').length;
+  document.getElementById('countHold').textContent = statuses.filter(x=>x==='On Hold').length;
+  document.getElementById('countEliminated').textContent = statuses.filter(x=>x==='Eliminated').length;
+}
+
+document.querySelectorAll('.filter').forEach(b => b.addEventListener('click', function() {
+  document.querySelectorAll('.filter').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  activeFilter = b.dataset.filter;
+  render();
+}));
+
+document.getElementById('search').addEventListener('input', render);
+render();
+function openLightbox(src){
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('open');
+}
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeLightbox(); });
+
+const restaurantGalleries = {
+  'Nardò Culver City': [
+    'nardo-patio-wide.jpg',
+    'nardo-patio-covered.jpg',
+    'nardo-patio-seating.jpg'
+  ]
+};
+
+function openRestaurantGallery(name){
+  const photos = restaurantGalleries[name] || [];
+  document.getElementById('restaurantGalleryTitle').textContent = name + ' — Private room / patio options';
+  document.getElementById('restaurantGalleryGrid').innerHTML =
+    photos.map((src,i) => `<img src="${src}" alt="${name} option ${i+1}">`).join('');
+  document.getElementById('restaurantGallery').classList.add('open');
+}
+function closeRestaurantGallery(){
+  document.getElementById('restaurantGallery').classList.remove('open');
+}
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') closeRestaurantGallery();
+});
+
+</script>
+<div class="lightbox" id="lightbox" onclick="if(event.target===this) closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close photo">×</button>
+  <img id="lightboxImg" src="" alt="Expanded restaurant photo">
+</div>
+
+<div class="gallery-modal" id="restaurantGallery" onclick="if(event.target===this) closeRestaurantGallery()">
+  <div class="gallery-panel">
+    <button class="gallery-close" type="button" onclick="closeRestaurantGallery()" aria-label="Close">×</button>
+    <h3 id="restaurantGalleryTitle">Restaurant photos</h3>
+    <div class="gallery-grid" id="restaurantGalleryGrid"></div>
+  </div>
+</div>
+
+</body>
+</html>
