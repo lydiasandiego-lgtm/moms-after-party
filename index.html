@@ -586,6 +586,101 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:26px}
   .banner-divider{width:150px}
 }
 
+
+/* Shared restaurant file uploads — Cloudinary + Firestore */
+.restaurant-files{
+  margin:10px 0 4px;
+  padding:10px 12px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:#fcfbf8;
+}
+.restaurant-files-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:8px;
+}
+.restaurant-files-title{
+  color:var(--muted);
+  font-size:13px;
+  font-weight:700;
+}
+.restaurant-upload-btn{
+  display:inline-block;
+  border:1px solid #d2dad5;
+  background:#eef2ef;
+  color:#24322d;
+  border-radius:8px;
+  padding:7px 10px;
+  font-weight:700;
+  font-size:12px;
+  cursor:pointer;
+}
+.restaurant-upload-btn:hover{background:#dfe7e2}
+.restaurant-file-input{display:none}
+.restaurant-dropzone{
+  border:1px dashed #c8c1b6;
+  border-radius:8px;
+  padding:10px;
+  text-align:center;
+  font-size:12px;
+  color:var(--muted);
+  background:white;
+}
+.restaurant-dropzone.dragover{
+  border-color:#8c7a5e;
+  background:#fff8e8;
+}
+.restaurant-upload-status{
+  margin-top:7px;
+  font-size:12px;
+  color:#5d6a63;
+  min-height:16px;
+}
+.restaurant-file-list{
+  margin-top:8px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.restaurant-file-link{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  text-decoration:none;
+  color:#3f4d47;
+  border:1px solid #e2ddd4;
+  border-radius:8px;
+  padding:7px 9px;
+  background:white;
+  font-size:12px;
+}
+.restaurant-file-link:hover{background:#f6f3ed}
+.restaurant-file-name{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-weight:600;
+}
+.restaurant-file-meta{
+  color:var(--muted);
+  white-space:nowrap;
+  font-size:11px;
+}
+.restaurant-file-empty{
+  color:var(--muted);
+  font-size:12px;
+  padding:2px 0;
+}
+@media(max-width:650px){
+  .restaurant-files-head{align-items:flex-start;flex-direction:column}
+  .restaurant-file-link{align-items:flex-start;flex-direction:column}
+  .restaurant-file-meta{white-space:normal}
+}
+
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
@@ -742,6 +837,138 @@ db.collection('restaurants').onSnapshot(async snapshot => {
   render();
 });
 
+
+const CLOUDINARY_CLOUD_NAME = 'dwb33lng';
+const CLOUDINARY_UPLOAD_PRESET = 'restaurant_files';
+
+function formatFileSize(bytes){
+  const n = Number(bytes || 0);
+  if (!n) return '';
+  if (n < 1024) return n + ' B';
+  if (n < 1024*1024) return Math.round(n/1024) + ' KB';
+  return (n/(1024*1024)).toFixed(n >= 10*1024*1024 ? 0 : 1) + ' MB';
+}
+
+function fileIcon(file){
+  const name = String(file.name || '').toLowerCase();
+  const type = String(file.resourceType || '').toLowerCase();
+  if (name.endsWith('.pdf')) return '📄';
+  if (type === 'image' || /\.(jpg|jpeg|png|gif|webp|heic|heif)$/i.test(name)) return '🖼️';
+  return '📎';
+}
+
+function renderRestaurantFiles(name, edit){
+  const id = docIdFor(name);
+  const files = Array.isArray(edit.files) ? edit.files : [];
+  const list = files.length
+    ? files.map(file => `
+        <a class="restaurant-file-link" href="${esc(file.url || '')}" target="_blank" rel="noopener">
+          <span class="restaurant-file-name">${fileIcon(file)} ${esc(file.name || 'Restaurant file')}</span>
+          <span class="restaurant-file-meta">${esc(file.format ? String(file.format).toUpperCase() : '')}${file.bytes ? ' • ' + formatFileSize(file.bytes) : ''}</span>
+        </a>`).join('')
+    : `<div class="restaurant-file-empty">No files uploaded yet.</div>`;
+
+  return `
+    <div class="restaurant-files">
+      <div class="restaurant-files-head">
+        <span class="restaurant-files-title">Files from Restaurant</span>
+        <label class="restaurant-upload-btn" for="restaurant-file-${id}">＋ Add Files</label>
+      </div>
+      <input
+        id="restaurant-file-${id}"
+        class="restaurant-file-input"
+        type="file"
+        multiple
+        onchange="uploadRestaurantFiles('${safeName(name)}', this.files, 'restaurant-file-${id}')">
+      <div
+        class="restaurant-dropzone"
+        id="restaurant-drop-${id}"
+        ondragover="restaurantDragOver(event)"
+        ondragleave="restaurantDragLeave(event)"
+        ondrop="restaurantDrop(event,'${safeName(name)}','restaurant-file-${id}')">
+        Drop restaurant photos, PDFs, menus, or other files here
+      </div>
+      <div class="restaurant-upload-status" id="restaurant-upload-status-${id}"></div>
+      <div class="restaurant-file-list">${list}</div>
+    </div>`;
+}
+
+function restaurantDragOver(event){
+  event.preventDefault();
+  event.currentTarget.classList.add('dragover');
+}
+function restaurantDragLeave(event){
+  event.currentTarget.classList.remove('dragover');
+}
+function restaurantDrop(event, name, inputId){
+  event.preventDefault();
+  event.currentTarget.classList.remove('dragover');
+  const files = event.dataTransfer && event.dataTransfer.files;
+  if (files && files.length) uploadRestaurantFiles(name, files, inputId);
+}
+
+async function uploadRestaurantFiles(name, fileList, inputId){
+  const files = Array.from(fileList || []);
+  if (!files.length) return;
+
+  const id = docIdFor(name);
+  const statusEl = document.getElementById('restaurant-upload-status-' + id);
+  const inputEl = document.getElementById(inputId);
+
+  try {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (statusEl) statusEl.textContent = `Uploading ${i+1} of ${files.length}: ${file.name}`;
+
+      const form = new FormData();
+      form.append('file', file);
+      form.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`,
+        { method: 'POST', body: form }
+      );
+
+      if (!response.ok) {
+        let message = `Upload failed (${response.status})`;
+        try {
+          const err = await response.json();
+          if (err && err.error && err.error.message) message = err.error.message;
+        } catch(e) {}
+        throw new Error(message);
+      }
+
+      const result = await response.json();
+      const record = {
+        name: file.name || result.original_filename || 'Restaurant file',
+        url: result.secure_url,
+        resourceType: result.resource_type || '',
+        format: result.format || '',
+        bytes: result.bytes || file.size || 0,
+        publicId: result.public_id || '',
+        uploadedAt: new Date().toISOString()
+      };
+
+      await db.collection('restaurants').doc(docIdFor(name)).set({
+        name,
+        files: firebase.firestore.FieldValue.arrayUnion(record),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+
+      if (!sharedEdits[name]) sharedEdits[name] = {};
+      if (!Array.isArray(sharedEdits[name].files)) sharedEdits[name].files = [];
+      sharedEdits[name].files.push(record);
+    }
+
+    if (statusEl) statusEl.textContent = files.length === 1 ? 'File uploaded and shared.' : `${files.length} files uploaded and shared.`;
+    if (inputEl) inputEl.value = '';
+    render();
+  } catch (err) {
+    console.error(err);
+    if (statusEl) statusEl.textContent = 'Upload failed: ' + err.message;
+  }
+}
+
 function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, function(m) {
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m];
@@ -828,6 +1055,7 @@ function renderCard(r) {
             <span>Private room / patio options</span>
             <button type="button" class="photo-link-btn" onclick="openRestaurantGallery('Nardò Culver City')">View photos sent by restaurant</button>
           </div>` : ''}
+          ${renderRestaurantFiles(r.name, e)}
           <label>Description</label>
           <textarea class="description-box" oninput="queueSave('${safeName(r.name)}','description',this.value)">${esc((e.description !== undefined) ? e.description : (r.description || ''))}</textarea>
           <label>Notes / Comments</label>
