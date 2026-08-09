@@ -882,6 +882,15 @@ function formatFileSize(bytes){
   return (n/(1024*1024)).toFixed(n >= 10*1024*1024 ? 0 : 1) + ' MB';
 }
 
+function browserViewUrl(file){
+  const url = String(file.url || '');
+  const name = String(file.name || '').toLowerCase();
+  if (name.endsWith('.pdf') && url.includes('res.cloudinary.com')) {
+    return url.replace('/raw/upload/', '/image/upload/');
+  }
+  return url;
+}
+
 function fileIcon(file){
   const name = String(file.name || '').toLowerCase();
   const type = String(file.resourceType || '').toLowerCase();
@@ -896,7 +905,7 @@ function renderRestaurantFiles(name, edit){
   const list = files.length
     ? files.map((file, index) => `
         <div class="restaurant-file-link">
-          <a href="${esc(file.url || '')}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;text-decoration:none;color:inherit;">
+          <a href="${esc(browserViewUrl(file))}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;text-decoration:none;color:inherit;">
             <span class="restaurant-file-name">${fileIcon(file)} ${esc(file.name || 'Restaurant file')}</span>
             <span class="restaurant-file-meta">${esc(file.format ? String(file.format).toUpperCase() : '')}${file.bytes ? ' • ' + formatFileSize(file.bytes) : ''}</span>
           </a>
