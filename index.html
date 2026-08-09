@@ -455,6 +455,137 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:26px}
 }
 .editbox textarea.description-box{min-height:84px}
 
+
+/* Final header: portrait left, original event text right. Everything below header unchanged. */
+.hero-inner{
+  max-width:1130px;
+  margin:0 auto;
+  min-height:220px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:28px;
+  padding:18px 20px;
+  position:relative;
+  z-index:2;
+}
+.portrait{
+  width:145px !important;
+  height:190px !important;
+  border-radius:0 !important;
+  border:0 !important;
+  padding:0 !important;
+  overflow:hidden !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  flex:0 0 auto;
+}
+.portrait img{
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  object-position:center !important;
+  display:block;
+  border-radius:0 !important;
+}
+.hero-copy{
+  text-align:center;
+  position:relative;
+  z-index:2;
+}
+.hero-copy h1{margin:0 0 8px}
+@media(max-width:650px){
+  .hero-inner{gap:14px;padding:14px 10px;min-height:180px}
+  .portrait{width:105px !important;height:145px !important}
+  .hero-copy h1{font-size:30px}
+}
+
+
+/* FINAL TOP BANNER — portrait left, event text right */
+.memorial-header{
+  background:#fbf6ec !important;
+  border-bottom:1px solid #d1ae63 !important;
+  margin:0 !important;
+  padding:0 !important;
+  min-height:0 !important;
+  overflow:hidden !important;
+}
+.banner-inner{
+  max-width:1180px;
+  margin:0 auto;
+  padding:18px 22px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:30px;
+}
+.banner-photo{
+  flex:0 0 170px;
+}
+.banner-photo img{
+  display:block;
+  width:170px;
+  height:auto;
+  max-height:225px;
+  object-fit:contain;
+  object-position:center;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+}
+.banner-copy{
+  flex:1;
+  text-align:center;
+  min-width:0;
+}
+.banner-copy h1{
+  margin:0 0 8px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:42px;
+  line-height:1.05;
+  font-weight:600;
+  color:#2f241c;
+}
+.banner-date{
+  font-size:14px;
+  font-weight:700;
+  color:#66615b;
+}
+.banner-subtitle{
+  margin-top:5px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:17px;
+  font-style:italic;
+  color:#a47429;
+}
+.banner-divider{
+  width:210px;
+  margin:10px auto 0;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#b98c40;
+}
+.banner-divider span{
+  height:1px;
+  background:#caa55b;
+  flex:1;
+}
+.banner-divider b{
+  font-size:18px;
+  font-weight:400;
+  line-height:1;
+}
+@media(max-width:650px){
+  .banner-inner{gap:14px;padding:12px 10px}
+  .banner-photo{flex-basis:105px}
+  .banner-photo img{width:105px;max-height:155px}
+  .banner-copy h1{font-size:29px}
+  .banner-date{font-size:12px}
+  .banner-subtitle{font-size:14px}
+  .banner-divider{width:150px}
+}
+
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
@@ -463,13 +594,17 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:26px}
 </head>
 <body>
 <header class="memorial-header">
-  <img class="memorial-flower left" src="flowers-left-v2.jpg" alt="">
-  <img class="memorial-flower right" src="flowers-right-v2.jpg" alt="">
-  <img class="memorial-photo" src="mom-real-portrait-v2.jpg" alt="Mary Anne Moreno">
-  <h1 class="memorial-title">Mom's After Party</h1>
-  <div class="memorial-date">Saturday, August 22, 2026 • 1:30 PM</div>
-  <div class="memorial-subtitle">A celebration of Mary Anne Moreno</div>
-  <div class="memorial-divider"></div>
+  <div class="banner-inner">
+    <div class="banner-photo">
+      <img src="MomRedShirt.jpg" alt="Mary Anne Moreno">
+    </div>
+    <div class="banner-copy">
+      <h1>Mom's After Party</h1>
+      <div class="banner-date">Saturday, August 22, 2026 • 1:30 PM</div>
+      <div class="banner-subtitle">A celebration of Mary Anne Moreno</div>
+      <div class="banner-divider"><span></span><b>♡</b><span></span></div>
+    </div>
+  </div>
 </header>
 
 <div class="wrap">
