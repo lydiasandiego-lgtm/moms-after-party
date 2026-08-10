@@ -744,6 +744,161 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:26px}
   }
 }
 
+
+/* CSS-ONLY celebratory banner enhancement — no background image */
+.memorial-header{
+  position:relative !important;
+  overflow:hidden !important;
+  background:
+    radial-gradient(circle at 12% 20%, rgba(255,255,255,.92) 0 2%, transparent 2.4%),
+    radial-gradient(circle at 87% 22%, rgba(255,255,255,.78) 0 1.5%, transparent 1.9%),
+    linear-gradient(135deg,#fffaf1 0%,#f9edcf 48%,#f1dcae 100%) !important;
+  border-bottom:1px solid #d0a553 !important;
+  box-shadow:inset 0 -1px 0 rgba(255,255,255,.65);
+}
+.memorial-header::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 27% 28%, rgba(200,145,39,.38) 0 2px, transparent 3px),
+    radial-gradient(circle at 31% 69%, rgba(200,145,39,.26) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at 72% 25%, rgba(200,145,39,.32) 0 2px, transparent 3px),
+    radial-gradient(circle at 78% 70%, rgba(200,145,39,.22) 0 1.5px, transparent 2.5px);
+}
+.memorial-header::after{
+  content:"";
+  position:absolute;
+  left:-8%;
+  right:-8%;
+  bottom:-72px;
+  height:145px;
+  border-radius:50% 50% 0 0 / 75% 75% 0 0;
+  border-top:1px solid rgba(190,135,36,.35);
+  background:linear-gradient(180deg,transparent,rgba(201,153,65,.10));
+  pointer-events:none;
+}
+
+.banner-inner{
+  position:relative;
+  z-index:2;
+}
+
+.banner-copy{
+  position:relative;
+  text-align:center;
+}
+
+/* gold ornamental flourish centered above title */
+.banner-copy::before{
+  content:"❦";
+  display:block;
+  width:260px;
+  max-width:70%;
+  margin:0 auto 5px;
+  padding-bottom:3px;
+  color:#c58b22;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:25px;
+  line-height:1;
+  border-bottom:1px solid rgba(197,139,34,.72);
+  text-shadow:0 1px 0 rgba(255,255,255,.7);
+}
+
+.banner-copy h1{
+  margin-top:5px !important;
+  margin-bottom:9px !important;
+  font-family:Georgia,"Times New Roman",serif !important;
+  font-size:51px !important;
+  line-height:1 !important;
+  font-weight:500 !important;
+  letter-spacing:.15px !important;
+  color:#2b2118 !important;
+  text-shadow:0 1px 0 rgba(255,255,255,.72);
+}
+.banner-date{
+  font-size:15px !important;
+  font-weight:700 !important;
+  color:#5b5650 !important;
+  letter-spacing:.15px !important;
+}
+.banner-subtitle{
+  margin-top:7px !important;
+  font-family:Georgia,"Times New Roman",serif !important;
+  font-size:20px !important;
+  font-style:italic !important;
+  color:#b2761e !important;
+}
+.banner-divider{
+  width:260px !important;
+  margin-top:13px !important;
+}
+.banner-divider span{
+  background:linear-gradient(90deg,transparent,#c6943d) !important;
+}
+.banner-divider span:last-child{
+  background:linear-gradient(90deg,#c6943d,transparent) !important;
+}
+.banner-divider b{
+  color:#b88631 !important;
+  font-size:19px !important;
+}
+
+/* keep existing party popper, just make it a stronger right-side accent */
+.banner-party-icon{
+  flex:0 0 118px !important;
+  font-size:78px !important;
+  transform:rotate(10deg) !important;
+  filter:drop-shadow(0 4px 5px rgba(93,60,15,.12));
+  position:relative;
+  z-index:3;
+}
+
+/* decorative sparkle cluster near party favor */
+.banner-party-icon::before{
+  content:"✦";
+  position:absolute;
+  left:-7px;
+  top:-15px;
+  color:#c9922d;
+  font-size:22px;
+  transform:rotate(-10deg);
+}
+.banner-party-icon::after{
+  content:"✧";
+  position:absolute;
+  right:-2px;
+  bottom:-8px;
+  color:#d1a04a;
+  font-size:18px;
+  transform:rotate(-10deg);
+}
+
+@media(max-width:650px){
+  .banner-copy::before{
+    width:145px;
+    font-size:18px;
+    margin-bottom:3px;
+  }
+  .banner-copy h1{
+    font-size:31px !important;
+  }
+  .banner-date{
+    font-size:12px !important;
+  }
+  .banner-subtitle{
+    font-size:15px !important;
+  }
+  .banner-divider{
+    width:155px !important;
+  }
+  .banner-party-icon{
+    flex-basis:56px !important;
+    font-size:44px !important;
+  }
+}
+
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
