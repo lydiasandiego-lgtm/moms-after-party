@@ -719,6 +719,31 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:26px}
   outline-offset:1px;
 }
 
+
+/* Simplified controls: top summary tiles are the only status filters. */
+.search-only-toolbar{
+  justify-content:flex-end;
+}
+.search-only-toolbar .search{
+  margin-left:auto;
+}
+
+/* Small celebratory accent at right of banner. */
+.banner-party-icon{
+  flex:0 0 110px;
+  font-size:72px;
+  line-height:1;
+  text-align:center;
+  transform:rotate(8deg);
+  user-select:none;
+}
+@media(max-width:650px){
+  .banner-party-icon{
+    flex-basis:56px;
+    font-size:44px;
+  }
+}
+
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
@@ -737,6 +762,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:26px}
       <div class="banner-subtitle">A celebration of Mary Anne Moreno</div>
       <div class="banner-divider"><span></span><b>♡</b><span></span></div>
     </div>
+    <div class="banner-party-icon" aria-hidden="true">🎉</div>
   </div>
 </header>
 
@@ -751,12 +777,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:26px}
 
 <div class="notice">Status, score, description and notes are shared live with everyone viewing this page.</div>
 
-<div class="toolbar">
-<button class="filter active" data-filter="All">All</button>
-<button class="filter" data-filter="Submitted Inquiry">Submitted Inquiry</button>
-<button class="filter" data-filter="Responded Under Review">Responded Under Review</button>
-<button class="filter" data-filter="Finalist">Finalist</button>
-<button class="filter" data-filter="Eliminated">❌ Eliminated</button>
+<div class="toolbar search-only-toolbar">
 <input id="search" class="search" placeholder="Search restaurant or cuisine">
 </div>
 
