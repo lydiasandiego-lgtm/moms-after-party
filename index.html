@@ -744,6 +744,301 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:26px}
   }
 }
 
+
+/* APPROVED MOCKUP HEADER REBUILD — Mom's picture file is unchanged */
+.memorial-header{
+  position:relative !important;
+  overflow:hidden !important;
+  margin:0 !important;
+  padding:0 !important;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,.95) 0 2.2%, transparent 2.6%),
+    radial-gradient(circle at 82% 18%, rgba(255,255,255,.92) 0 1.8%, transparent 2.2%),
+    linear-gradient(180deg,#fffaf1 0%,#f4e2bd 100%) !important;
+  border-bottom:1px solid #d2aa5e !important;
+}
+.memorial-header::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(115deg, transparent 0 72%, rgba(202,145,39,.10) 72.5% 73%, transparent 73.5%),
+    linear-gradient(65deg, transparent 0 26%, rgba(202,145,39,.08) 26.5% 27%, transparent 27.5%);
+}
+.memorial-header::after{
+  content:"";
+  position:absolute;
+  left:-8%;
+  right:-8%;
+  bottom:-64px;
+  height:150px;
+  border-radius:50% 50% 0 0 / 75% 75% 0 0;
+  border-top:1px solid rgba(196,139,38,.32);
+  background:linear-gradient(180deg,rgba(255,255,255,0),rgba(214,167,87,.14));
+  pointer-events:none;
+}
+
+.mockup-banner-inner{
+  max-width:1180px;
+  min-height:250px;
+  margin:0 auto;
+  padding:24px 28px 18px;
+  display:grid;
+  grid-template-columns:190px 1fr 135px;
+  align-items:center;
+  gap:28px;
+  position:relative;
+  z-index:2;
+}
+
+/* Portrait: same image file, no image editing */
+.mockup-portrait-wrap{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.mockup-portrait{
+  display:block;
+  width:170px;
+  height:auto;
+  max-height:215px;
+  object-fit:contain;
+  object-position:center;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  background:transparent;
+}
+
+.mockup-copy{
+  text-align:center;
+  position:relative;
+}
+.mockup-sparkles{
+  color:#d3a13d;
+  font-size:18px;
+  letter-spacing:18px;
+  opacity:.78;
+  margin-bottom:2px;
+}
+.mockup-flourish{
+  display:inline-block;
+  min-width:270px;
+  padding:0 28px 3px;
+  margin-bottom:6px;
+  color:#c58e28;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:25px;
+  line-height:1;
+  border-bottom:1px solid rgba(197,142,40,.72);
+}
+.mockup-copy h1{
+  margin:4px 0 10px !important;
+  font-family:Georgia,"Times New Roman",serif !important;
+  font-size:52px !important;
+  line-height:1 !important;
+  font-weight:500 !important;
+  letter-spacing:.2px !important;
+  color:#2c2118 !important;
+  text-shadow:0 1px 0 rgba(255,255,255,.65);
+}
+.mockup-date{
+  font-size:15px;
+  font-weight:700;
+  color:#5e5851;
+  letter-spacing:.15px;
+}
+.mockup-subtitle{
+  margin-top:6px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:20px;
+  font-style:italic;
+  color:#b37b22;
+}
+.mockup-divider{
+  width:275px;
+  margin:13px auto 0;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  color:#b98a35;
+}
+.mockup-divider span{
+  flex:1;
+  height:1px;
+  background:linear-gradient(90deg,transparent,#c89a45);
+}
+.mockup-divider span:last-child{
+  background:linear-gradient(90deg,#c89a45,transparent);
+}
+.mockup-divider b{
+  font-size:18px;
+  font-weight:400;
+  line-height:1;
+}
+
+.mockup-party{
+  font-size:92px;
+  line-height:1;
+  text-align:center;
+  transform:rotate(10deg);
+  filter:drop-shadow(0 4px 6px rgba(92,61,18,.10));
+}
+
+@media(max-width:760px){
+  .mockup-banner-inner{
+    min-height:205px;
+    padding:18px 12px 14px;
+    grid-template-columns:105px 1fr 62px;
+    gap:12px;
+  }
+  .mockup-portrait{
+    width:100px;
+    max-height:150px;
+  }
+  .mockup-sparkles{
+    font-size:12px;
+    letter-spacing:8px;
+  }
+  .mockup-flourish{
+    min-width:140px;
+    padding:0 12px 2px;
+    font-size:18px;
+  }
+  .mockup-copy h1{
+    font-size:32px !important;
+  }
+  .mockup-date{
+    font-size:12px;
+  }
+  .mockup-subtitle{
+    font-size:15px;
+  }
+  .mockup-divider{
+    width:160px;
+  }
+  .mockup-party{
+    font-size:48px;
+  }
+}
+
+
+/* FINAL BANNER: decorative mockup background image + unchanged MomRedShirt.jpg */
+.memorial-header{
+  margin:0 !important;
+  padding:0 !important;
+  min-height:0 !important;
+  overflow:hidden !important;
+  background:#fff8eb url('banner-background.jpg') center top/100% 100% no-repeat !important;
+  border-bottom:1px solid #d4aa58 !important;
+}
+.memorial-header::before,
+.memorial-header::after{
+  display:none !important;
+  content:none !important;
+}
+.final-banner-inner{
+  max-width:1180px;
+  min-height:255px;
+  margin:0 auto;
+  padding:22px 24px 18px;
+  display:grid;
+  grid-template-columns:185px 1fr 160px;
+  gap:28px;
+  align-items:center;
+}
+.final-banner-photo{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.final-banner-photo img{
+  display:block;
+  width:170px;
+  height:auto;
+  max-height:220px;
+  object-fit:contain;
+  object-position:center;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  background:transparent;
+}
+.final-banner-copy{
+  text-align:center;
+  position:relative;
+  padding-top:12px;
+}
+.final-banner-copy h1{
+  margin:0 0 10px !important;
+  font-family:Georgia,"Times New Roman",serif !important;
+  font-size:54px !important;
+  line-height:1 !important;
+  font-weight:500 !important;
+  letter-spacing:.1px !important;
+  color:#12213d !important;
+  text-shadow:0 1px 0 rgba(255,255,255,.65);
+}
+.final-banner-date{
+  font-size:16px;
+  font-weight:700;
+  color:#343a43;
+  margin-top:5px;
+}
+.final-banner-subtitle{
+  margin-top:7px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:21px;
+  font-style:italic;
+  color:#b77b1f;
+}
+.final-banner-divider{
+  width:245px;
+  margin:14px auto 0;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  color:#b48734;
+}
+.final-banner-divider span{
+  flex:1;
+  height:1px;
+  background:linear-gradient(90deg,transparent,#c89b47);
+}
+.final-banner-divider span:last-child{
+  background:linear-gradient(90deg,#c89b47,transparent);
+}
+.final-banner-divider b{
+  font-size:19px;
+  font-weight:400;
+  line-height:1;
+}
+.final-banner-party-space{
+  min-height:1px;
+}
+@media(max-width:760px){
+  .final-banner-inner{
+    min-height:205px;
+    padding:16px 10px 13px;
+    grid-template-columns:105px 1fr 55px;
+    gap:11px;
+  }
+  .final-banner-photo img{width:100px;max-height:150px}
+  .final-banner-copy h1{font-size:32px !important}
+  .final-banner-date{font-size:12px}
+  .final-banner-subtitle{font-size:15px}
+  .final-banner-divider{width:155px}
+}
+
+
+@media(max-width:1180px){
+  .memorial-header{
+    background-size:100% 100% !important;
+    background-position:center top !important;
+  }
+}
+
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
@@ -752,17 +1047,17 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:26px}
 </head>
 <body>
 <header class="memorial-header">
-  <div class="banner-inner">
-    <div class="banner-photo">
+  <div class="final-banner-inner">
+    <div class="final-banner-photo">
       <img src="MomRedShirt.jpg" alt="Mary Anne Moreno">
     </div>
-    <div class="banner-copy">
+    <div class="final-banner-copy">
       <h1>Mom's After Party</h1>
-      <div class="banner-date">Saturday, August 22, 2026 • 1:30 PM</div>
-      <div class="banner-subtitle">A celebration of Mary Anne Moreno</div>
-      <div class="banner-divider"><span></span><b>♡</b><span></span></div>
+      <div class="final-banner-date">Saturday, August 22, 2026 • 1:30 PM</div>
+      <div class="final-banner-subtitle">A celebration of Mary Anne Moreno</div>
+      <div class="final-banner-divider"><span></span><b>♡</b><span></span></div>
     </div>
-    <div class="banner-party-icon" aria-hidden="true">🎉</div>
+    <div class="final-banner-party-space" aria-hidden="true"></div>
   </div>
 </header>
 
